@@ -424,10 +424,10 @@ footer{border-top:1px solid var(--line);padding:26px 0 40px;font-family:var(--mo
         <div><i>▸</i><span><span class="zh"><b>系统原生通话界面</b>，由 Telecom <code style="font-family:var(--mono);font-size:.85em">CALL_PROVIDER</code> 拿到，不需要特权</span><span class="en"><b>System-native call UI</b>, obtained via Telecom <code style="font-family:var(--mono);font-size:.85em">CALL_PROVIDER</code> — no privileged permissions</span></span></div>
         <div><i>▸</i><span><span class="zh"><b>无 SIM 卡</b>也能拨通，车机外放与蓝牙天然承接</span><span class="en">Works <b>with no SIM</b>; car speakers and Bluetooth are inherited for free</span></span></div>
         <div><i>▸</i><span><span class="zh"><b>全双工语音</b>，说完即答（现有链路实测首响 1.6–1.7s、打断体感 330ms 内）</span><span class="en"><b>Full-duplex voice</b>, answers as you finish (measured on the current link: 1.6–1.7s to first response, barge-in under 330ms)</span></span></div>
-        <div><i>▸</i><span><span class="zh">通话中可<b>插播</b>后台任务的完工结果；挂断后下次来电<b>补报未读回执</b></span><span class="en">Finished background tasks can be <b>interjected mid-call</b>; hang up and the next call <b>replays the unread receipts</b></span></span></div>
+        <div><i>▸</i><span><span class="zh">电话里派一个后台任务，它<b>在通话中把结果插播</b>给你；挂断了，<b>下次来电也会补报</b>　<span style="color:var(--fg-faint)">（由它主动呼出回拨尚未实现）</span></span><span class="en">Dispatch a background task by phone and it <b>interjects the result mid-call</b>; hang up, and <b>the next call replays it</b>　<span style="color:var(--fg-faint)">(having it dial out to you is not built yet)</span></span></span></div>
       </div>
       <div class="fineprint">
-        <span class="zh">// 手机实拍录屏，字幕为后期标注。画面中的状态栏 / 通知区与通话记录区已做模糊处理。<a href="media/car-ai-call-demo.mp4" style="color:var(--cy);text-decoration:none;border-bottom:1px solid var(--line-2)">直接下载原片 ↗</a></span>
+        <span class="zh">// 手机实拍录屏，字幕为后期标注。画面中的状态栏 / 通知区与通话记录区已做模糊处理。<a href="media/car-ai-call-demo.mp4" style="color:var(--cy);text-decoration:none;border-bottom:1px solid var(--line-2)">下载这段视频 ↗</a></span>
         <span class="en">// Screen recording from the handset; subtitles added afterwards. The status bar, notification area and call log in frame have been blurred. <a href="media/car-ai-call-demo.mp4" style="color:var(--cy);text-decoration:none;border-bottom:1px solid var(--line-2)">Download the clip ↗</a></span>
       </div>
     </div>
@@ -460,8 +460,8 @@ footer{border-top:1px solid var(--line);padding:26px 0 40px;font-family:var(--mo
     <div class="num"><div class="v" data-n="6" data-suf="种" data-suf-en="">0</div><div class="k"><span class="zh">已接入 Agent 后端</span><span class="en">agent backends wired in</span></div></div>
     <div class="num"><div class="v" data-n="8" data-suf="个" data-suf-en="">0</div><div class="k"><span class="zh">同群协作机器人</span><span class="en">bots co-working in one group</span></div></div>
     <div class="num"><div class="v" data-n="30" data-suf="+">0</div><div class="k"><span class="zh">生产级业务 Skill</span><span class="en">production business skills</span></div></div>
-    <div class="num"><div class="v" data-n="1.6" data-suf="s" data-dec="1">0</div><div class="k"><span class="zh">语音端到端首响</span><span class="en">voice first-token latency</span></div></div>
-    <div class="num"><div class="v" data-n="330" data-suf="ms">0</div><div class="k"><span class="zh">语音打断体感延迟</span><span class="en">barge-in perceived latency</span></div></div>
+    <div class="num"><div class="v" data-n="1.6" data-suf="s" data-dec="1">0</div><div class="k"><span class="zh">语音端到端首响 · 现有链路实测</span><span class="en">voice first-token latency · measured, current link</span></div></div>
+    <div class="num"><div class="v" data-n="330" data-suf="ms">0</div><div class="k"><span class="zh">语音打断体感延迟 · 单机实测</span><span class="en">barge-in perceived latency · one handset</span></div></div>
     <div class="num"><div class="v" data-pre="$" data-n="650" data-suf="万" data-n-en="6.5" data-dec-en="1" data-suf-en="M">0</div><div class="k"><span class="zh">Sigma Money 协议 TVL 历史峰值</span><span class="en">Sigma Money protocol peak TVL</span></div></div>
     <div class="num"><div class="v" data-n="39" data-suf="GB">0</div><div class="k"><span class="zh">相册增量同步已跑完 / 8652 文件</span><span class="en">photos incrementally synced / 8,652 files</span></div></div>
   </div>
