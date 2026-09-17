@@ -140,6 +140,7 @@ h1.name .cn{display:block;font-family:var(--cjk);letter-spacing:.06em;font-size:
 .term-top i:first-child{background:var(--cy);opacity:.8}
 .term-body{padding:14px 14px 16px;font-family:var(--mono);font-size:clamp(11.5px,2.5vw,13px);line-height:1.9;color:var(--fg-dim);min-height:104px}
 .term-body .p{color:var(--cy)}
+.term-disclaimer{margin-top:10px;padding-top:9px;border-top:1px dashed var(--line);font-family:var(--mono);font-size:.82em;color:var(--vi);opacity:.95;letter-spacing:.02em}
 .term-body .out{color:var(--fg)}
 .cursor{display:inline-block;width:8px;height:1.05em;background:var(--cy);vertical-align:-2px;animation:bl 1s steps(2) infinite}
 .cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:32px}
@@ -366,6 +367,7 @@ footer{border-top:1px solid var(--line);padding:26px 0 40px;font-family:var(--mo
     <div class="term-body">
       <div><span class="p">$</span> <span id="tw"></span><span class="cursor"></span></div>
       <div id="twout" class="out"></div>
+      <div class="term-disclaimer"><span class="zh">// 交互示意，非实时系统输出</span><span class="en">// illustrative replay, not a live system feed</span></div>
     </div>
   </div>
 
@@ -431,7 +433,7 @@ footer{border-top:1px solid var(--line);padding:26px 0 40px;font-family:var(--mo
     </div>
 
     <div class="phone">
-      <span class="tagpill">LIVE CAPTURE · 51s</span>
+      <span class="tagpill">LIVE CAPTURE · 51s · <span class="zh">无音轨</span><span class="en">no audio</span></span>
       <video muted playsinline loop controls preload="metadata"
              poster="media/car-ai-call-demo-poster.jpg"
              aria-label="Demo: dialling 8888 from the system dialler and talking to an agent in the native call UI">
@@ -578,8 +580,8 @@ footer{border-top:1px solid var(--line);padding:26px 0 40px;font-family:var(--mo
           <span class="en">Built a high-concurrency multi-model aggregation gateway, and distilled a set of <b>authenticity probes</b>: long-context memory boundaries, logic traps, refusal fingerprints and generation-style tells expose re-skinned models; response headers, TLS handshakes and latency distributions trace whether a request goes <b>direct to the vendor, through a second-hop reverse proxy, or via Bedrock/Vertex</b>. Plus SSE frame-slicing, token accounting reconciliation and measured long-context decay.</span>
         </div></div>
         <div class="row res"><div class="lab">RESULT</div><div class="txt">
-          <span class="zh">在生产流量上持续运行，供应商真伪与路由链路可被<b>秒级判定</b>而不是靠对方自述。</span>
-          <span class="en">Running on production traffic; a supplier's authenticity and routing path can be <b>judged in seconds</b> instead of taken on their word.</span>
+          <span class="zh">在生产流量上持续运行，能拿到供应商真伪与路由链路的<b>异常线索与一致性评测结果</b>，而不是只听对方自述。</span>
+          <span class="en">Running on production traffic; it yields <b>anomaly signals and consistency measurements</b> on a supplier's authenticity and routing path, rather than taking their word for it.</span>
         </div></div>
       </div>
       <div class="mini"><span>SSE frame slicing</span><span>Token accounting</span><span>TLS / header forensics</span><span>Long-context decay</span></div>
@@ -695,8 +697,8 @@ footer{border-top:1px solid var(--line);padding:26px 0 40px;font-family:var(--mo
           <div class="viz-bar"><span id="phase">BOOT</span><span id="tick">UNITS 7 / MERGE 0</span></div>
         </div>
         <div class="viz-cap">
-          <span class="zh">// 一条需求 fan-out ≤7 个独立子会话并行 → 周期性收束做记忆合并 → 带着共享记忆再分化。左半（并行调度 / 跨轮存活）已在用，合并那一步的证据校验是赛期要做的。</span>
-          <span class="en">// one request fans out to ≤7 independent sub-sessions running in parallel → they periodically converge to merge memory → then re-differentiate carrying it. The fan-out and cross-turn survival already work; the evidence-checking inside the merge is what the hackathon is for.</span>
+          <span class="zh">// 一条需求 fan-out ≤7 个独立子会话并行 → 周期性收束做记忆合并 → 带着共享记忆再分化。左半（并行调度 / 跨轮存活）已在用，合并那一步的证据校验是赛期要做的。　<b style="color:var(--vi)">示意动画，非实时系统输出。</b></span>
+          <span class="en">// one request fans out to ≤7 independent sub-sessions running in parallel → they periodically converge to merge memory → then re-differentiate carrying it. The fan-out and cross-turn survival already work; the evidence-checking inside the merge is what the hackathon is for.　<b style="color:var(--vi)">Illustrative animation, not a live system feed.</b></span>
         </div>
       </div>
     </div>
