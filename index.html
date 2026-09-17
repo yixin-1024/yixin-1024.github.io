@@ -89,7 +89,7 @@ hr{border:0; border-top:1px solid var(--line); margin:0 0 56px}
       </li>
       <li>
         <p class="t">CarVoice</p>
-        <p class="d">用手机系统自带的拨号器打给 Agent。拨号进去就是原生通话界面，用说的派任务；跑完了结果会在通话中插播，先挂断的话，下次来电补报。Android 原生音频链路自己写的，双工、打断、重采样都在里面。</p>
+        <p class="d">上面那个电话的另一半。Android 原生的通话框架，音频链路手写：双工推拉流、打断、8k 到 48k 的重采样。最难缠的一处是它推流比你听的快四倍——你喊停，它嘴上是停了，本地缓冲里「已经说完」的话还在往外放，得连队列一起清掉才算真停。</p>
       </li>
       <li>
         <p class="t">合规与支付场景的自动化<span class="meta">工作项目</span></p>
