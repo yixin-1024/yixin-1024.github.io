@@ -5,9 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="dark light">
 <title>卢一鑫 Louie · Agent 工程 / 多 Agent 舰队</title>
-<meta name="description" content="卢一鑫 (Louie) — 全栈工程师 / AI Agent 工程实践者。近 30 天烧掉 140 亿 token，全部烧在生产系统上。cc-lark 多 Agent 舰队 · CarVoice 语音具身 · 金融合规垂类 Agent。">
+<meta name="description" content="卢一鑫 (Louie) — 全栈工程师 / 系统架构 / 多 Agent 工程实践者。近 30 天约 140 亿 token（API 等值口径）。cc-lark 多 Agent 舰队 · CarVoice 语音入口 · 金融合规垂类 Agent。">
 <meta property="og:title" content="卢一鑫 Louie · Agent 工程 / 多 Agent 舰队">
-<meta property="og:description" content="近 30 天烧掉 140 亿 token，全部烧在生产系统上。">
+<meta property="og:description" content="共享记忆，不必共享同一个判断。多 Agent 并行调度 · 跨模型会签 · 手机原生通话语音入口。">
 <meta property="og:type" content="profile">
 <meta property="og:url" content="https://yixin-1024.github.io">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23050709'/%3E%3Cpath d='M16 5a11 11 0 1 0 0 22 11 11 0 0 0 0-22zm0 4.2a6.8 6.8 0 1 1 0 13.6 6.8 6.8 0 0 1 0-13.6z' fill='%2300fff0'/%3E%3Ccircle cx='16' cy='16' r='2.6' fill='%2300fff0'/%3E%3C/svg%3E">
@@ -218,6 +218,17 @@ html[data-lang="en"] .pmr .row{grid-template-columns:72px 1fr}
 @media(min-width:900px){.tk-body{grid-template-columns:1.05fr .95fr;align-items:start}}
 .tk-copy p{margin:0 0 13px;font-size:.93rem;color:var(--fg-dim)}
 .tk-copy p b{color:var(--fg);font-weight:600}
+.tk-copy .claim{font-size:clamp(1.05rem,2.7vw,1.32rem);color:var(--cy);font-weight:600;line-height:1.4;margin-bottom:14px;letter-spacing:-.01em}
+.tk-copy .caveat{font-family:var(--mono);font-size:10.5px;color:var(--fg-faint);line-height:1.7;margin-top:14px;border-top:1px solid var(--line);padding-top:12px}
+html[data-lang="zh"] .tk-copy .caveat{font-family:var(--cjk);font-size:11.5px}
+.split{display:grid;gap:18px;margin-top:18px}
+@media(min-width:560px){.split{grid-template-columns:1fr 1fr;gap:20px}}
+.split .col{border:1px solid var(--line);border-radius:2px;padding:13px 14px 14px;background:var(--panel-2)}
+.split h4{margin:0 0 10px;font-family:var(--mono);font-size:10px;letter-spacing:.16em;font-weight:500}
+.split h4.ok{color:var(--cy)} .split h4.wip{color:var(--vi)}
+html[data-lang="zh"] .split h4{font-family:var(--cjk);font-size:11.5px;letter-spacing:.06em}
+.split .flow{margin:0;gap:8px}
+.split .col:last-child .flow i{color:var(--vi)}
 .tk-copy p .hl{color:var(--cy)}
 .flow{display:grid;gap:7px;margin:16px 0 0;font-family:var(--mono);font-size:11px;letter-spacing:.04em}
 .flow div{display:flex;gap:9px;align-items:flex-start;color:var(--fg-dim)}
@@ -313,13 +324,13 @@ footer{border-top:1px solid var(--line);padding:26px 0 40px;font-family:var(--mo
   </h1>
 
   <p class="tagline">
-    <span class="zh">全栈工程师 · 系统架构 · 把多 Agent 协作跑成了生产环境的人</span>
-    <span class="en">Full-stack engineer · systems architect · running multi-agent collaboration in production, not in slides</span>
+    <span class="zh">全栈工程师 · 系统架构 · 把多 Agent 协作做成日常在用的工程系统</span>
+    <span class="en">Full-stack engineer · systems architect · turning multi-agent collaboration into systems I actually use daily</span>
   </p>
 
   <p class="hook">
-    <span class="zh">近 30 天烧掉 <b>140 亿 token</b>，<b>全部烧在生产系统上</b> —— 合规筛查、跨境开户、发卡对账、语音派活，不是 Demo。</span>
-    <span class="en">≈<b>14B tokens</b> burned in the last 30 days — <b>every one of them on production systems</b>: AML screening, cross-border onboarding, card issuing, reconciliation, voice-dispatched engineering. Not demos.</span>
+    <span class="zh">近 30 天约 <b>140 亿 token</b>（按 API 等值口径统计），单日峰值 17 亿。我做的事：让一群异构 Agent 在 IM 群里<b>并行干活、互相复核</b>，再把结果交出来。</span>
+    <span class="en">≈<b>14B tokens</b> over the last 30 days (API-equivalent accounting), peaking at 1.7B in one day. What I build: heterogeneous agents that <b>work in parallel and re-verify each other</b> inside a group chat, then hand over the result.</span>
   </p>
 
   <div class="term" aria-hidden="true">
@@ -347,11 +358,12 @@ footer{border-top:1px solid var(--line);padding:26px 0 40px;font-family:var(--mo
       <dt>EDU</dt><dd><span class="zh">华中科技大学 · 软件工程</span><span class="en">HUST · Software Engineering</span></dd>
       <dt>TRACK</dt><dd><b>SECTION 9</b> · GHOST NETWORK</dd>
       <dt>FLEET</dt><dd><span class="zh">6 后端 · 8 机器人 · 30+ Skill</span><span class="en">6 backends · 8 bots · 30+ skills</span></dd>
+      <dt>CLAIM</dt><dd><span class="zh"><b>共享记忆，不必共享同一个判断</b></span><span class="en"><b>Share the memory, not the verdict</b></span></dd>
     </dl>
     <div class="bars">
-      <div class="bar"><span>AGENT ORCHESTRATION</span><span>生产</span></div><div class="trk"><i style="width:100%"></i></div>
+      <div class="bar"><span>AGENT ORCHESTRATION</span><span>30+</span></div><div class="trk"><i style="width:100%"></i></div>
       <div class="bar"><span>VOICE / EMBODIED</span><span>1.6s</span></div><div class="trk"><i style="width:88%"></i></div>
-      <div class="bar"><span>FINTECH COMPLIANCE</span><span>30+</span></div><div class="trk"><i style="width:94%"></i></div>
+      <div class="bar"><span>FINTECH COMPLIANCE</span><span>KYC/KYB</span></div><div class="trk"><i style="width:94%"></i></div>
     </div>
   </aside>
   </div>
@@ -364,7 +376,7 @@ footer{border-top:1px solid var(--line);padding:26px 0 40px;font-family:var(--mo
   <div class="sec-head rv">
     <span class="sec-idx">// 01</span>
     <h2><span class="zh">硬数据</span><span class="en">HARD NUMBERS</span></h2>
-    <span class="sec-sub"><span class="zh">全部实测口径</span><span class="en">all measured, none estimated</span></span>
+    <span class="sec-sub"><span class="zh">每个数字都在下方标了来源</span><span class="en">every figure carries its source, below</span></span>
   </div>
   <div class="rule"></div>
   <div class="nums rv">
@@ -376,12 +388,12 @@ footer{border-top:1px solid var(--line);padding:26px 0 40px;font-family:var(--mo
     <div class="num"><div class="v" data-n="30" data-suf="+">0</div><div class="k"><span class="zh">生产级业务 Skill</span><span class="en">production business skills</span></div></div>
     <div class="num"><div class="v" data-n="1.6" data-suf="s" data-dec="1">0</div><div class="k"><span class="zh">语音端到端首响</span><span class="en">voice first-token latency</span></div></div>
     <div class="num"><div class="v" data-n="330" data-suf="ms">0</div><div class="k"><span class="zh">语音打断体感延迟</span><span class="en">barge-in perceived latency</span></div></div>
-    <div class="num"><div class="v" data-pre="$" data-n="650" data-suf="万" data-n-en="6.5" data-dec-en="1" data-suf-en="M">0</div><div class="k"><span class="zh">Sigma Money 历史 TVL 峰值</span><span class="en">Sigma Money peak TVL</span></div></div>
+    <div class="num"><div class="v" data-pre="$" data-n="650" data-suf="万" data-n-en="6.5" data-dec-en="1" data-suf-en="M">0</div><div class="k"><span class="zh">Sigma Money 协议 TVL 历史峰值</span><span class="en">Sigma Money protocol peak TVL</span></div></div>
     <div class="num"><div class="v" data-n="39" data-suf="GB">0</div><div class="k"><span class="zh">相册增量同步已跑完 / 8652 文件</span><span class="en">photos incrementally synced / 8,652 files</span></div></div>
   </div>
   <div class="nums-note">
-    <span class="zh">// 口径：API 等值计费 ≈ $19.7k / 30 天，单日峰值 $3,175。语音延迟取自生产日志 grep。</span>
-    <span class="en">// basis: API-equivalent ≈ $19.7k / 30d, peak day $3,175. Voice latency straight out of production logs.</span>
+    <span class="zh">// 来源　token 用量 = 近 30 天 API 等值口径统计（≈$1.97 万，峰值日 $3,175）　·　语音延迟 = 2026-09 现有链路实测，取自服务日志　·　舰队 / 后端 / Skill 数 = cc-lark 当前配置（后端按组合口径计，opencode+Gemini 记为一个接入）　·　TVL = Sigma Money 协议历史峰值，非个人收入　·　相册同步 = 已全量跑完的累计量</span>
+    <span class="en">// sources　token usage = API-equivalent accounting over the last 30 days (≈$19.7k, peak day $3,175)　·　voice latency = measured on the current link, Sept 2026, from service logs　·　fleet / backend / skill counts = cc-lark's present configuration (backends counted as integrations; opencode+Gemini counts as one)　·　TVL = Sigma Money protocol all-time peak, not personal revenue　·　photo sync = cumulative total already completed</span>
   </div>
 </section>
 
@@ -403,20 +415,20 @@ footer{border-top:1px solid var(--line);padding:26px 0 40px;font-family:var(--mo
       <p class="lede"><span class="zh">以 IM 群聊为总线的多 Agent 舰队平台。</span><span class="en">A multi-agent fleet platform that uses an IM group chat as its bus.</span></p>
       <div class="pmr">
         <div class="row"><div class="lab">PAIN</div><div class="txt">
-          <span class="zh">主流 CLI Agent 是「单轮、单体、进程一死全丢」；多 Agent 协作大多还停在框架示意图上。</span>
-          <span class="en">Mainstream CLI agents are single-turn, single-process, and lose everything when the process dies. "Multi-agent" mostly still lives in architecture diagrams.</span>
+          <span class="zh">我的执行环境是「每轮启动、轮末结束」：一条命令跑完，进程就没了。要让耗时任务继续跑、让多个 Agent 同时干活、并把结果送回原来那条对话里，得先自己把这层运行时补上。</span>
+          <span class="en">My execution environment spawns a process per turn and kills it when the turn ends. To keep long-running tasks alive, let several agents work at once, and deliver results back into the conversation they came from, I had to build that runtime layer myself.</span>
         </div></div>
         <div class="row"><div class="lab">BUILD</div><div class="txt">
           <span class="zh"><b>① 舰队并行编排</b>：一条需求 fan-out ≤7 个独立子会话，托管在常驻进程名下、<b>跨轮存活</b>，完工自动回贴并唤醒主 Agent 聚合。<br>
-          <b>② 跨模型异构会签</b>：Claude / GPT / Gemini / opencode / MiMo / Grok / Antigravity 各作为独立机器人进同一个群，一方实现、另一方回到 ground truth（链上解码、查库对账、无头浏览器真跑 UI）独立复核，<b>双签才算交付</b>。<br>
+          <b>② 跨模型异构会签</b>：Claude、GPT 等异构 Agent 各作为独立机器人进同一个群，一方实现、另一方回到 ground truth（链上解码、查库对账、无头浏览器真跑 UI）独立复核，<b>双签才算交付</b>。<br>
           <b>③ 运行时 MCP 打破单轮生命周期</b>：自研 MCP Server 给「每轮 spawn、轮末即杀」的 Agent 注入 wake_me_in / dispatch_task / handover / schedule_cron 等 <b>13 个运行时工具</b>；任务状态落盘，进程重启或崩溃后自动续跑。</span>
           <span class="en"><b>① Fleet orchestration</b> — one request fans out to ≤7 independent sub-sessions, hosted under a resident process so they <b>survive past the turn</b>; each reports back and wakes the main agent to aggregate.<br>
-          <b>② Heterogeneous cross-model co-sign</b> — Claude / GPT / Gemini / opencode / MiMo / Grok / Antigravity each join the same group as separate bots. One implements, another independently re-verifies against ground truth (on-chain decoding, DB reconciliation, real headless-browser UI runs). <b>No delivery without two signatures.</b><br>
+          <b>② Heterogeneous cross-model co-sign</b> — Claude, GPT and other heterogeneous agents each join the same group as separate bots. One implements, another independently re-verifies against ground truth (on-chain decoding, DB reconciliation, real headless-browser UI runs). <b>No delivery without two signatures.</b><br>
           <b>③ A runtime MCP that breaks the single-turn lifecycle</b> — a self-built MCP server injects <b>13 runtime tools</b> (wake_me_in, dispatch_task, handover, schedule_cron…) into agents that are spawned and killed every turn. Task state is persisted, so work resumes after a restart or a crash.</span>
         </div></div>
         <div class="row res"><div class="lab">RESULT</div><div class="txt">
-          <span class="zh"><b>6 种 Agent 后端、8 个机器人</b>同群协作，日常承接端到端开发、排障与业务运维；已抽象出 Org → Employee → Agent 三层 + Docker 一人一沙箱的多租户形态。<b>这个网站也是它派出去的一个子会话做的。</b></span>
-          <span class="en"><b>6 agent backends, 8 bots</b> working in one group, handling day-to-day end-to-end development, debugging and business ops. Already abstracted into an Org → Employee → Agent tenancy model with one Docker sandbox per person. <b>This very site was built by one of its dispatched sub-sessions.</b></span>
+          <span class="zh"><b>6 种 Agent 后端（组合口径）、8 个机器人</b>同群协作，用于日常开发、排障与业务运维；已抽象出 Org → Employee → Agent 三层 + Docker 一人一沙箱的多租户形态。<b>这个网站也是它派出去的一个子会话做的。</b></span>
+          <span class="en"><b>6 agent backends (counted as integrations), 8 bots</b> in one group, used for day-to-day development, debugging and business ops. Already abstracted into an Org → Employee → Agent tenancy model with one Docker sandbox per person. <b>This very site was built by one of its dispatched sub-sessions.</b></span>
         </div></div>
       </div>
       <div class="mini"><span>Fleet fan-out ≤7</span><span>Dual-Bot Cosign</span><span>Runtime MCP ×13</span><span>Crash-resume</span><span>Lark / 飞书 / Telegram</span><span>Multi-tenant SaaS</span></div>
@@ -437,12 +449,12 @@ footer{border-top:1px solid var(--line);padding:26px 0 40px;font-family:var(--mo
           <span class="en">Pure native Android Java, zero UI frameworks. Telecom <b>CALL_PROVIDER</b> yields the <b>system-native call UI</b> (no privileged perms, dials without a SIM, inherits car speaker and Bluetooth for free). Self-built VoiceLink handles duplex audio push/pull, adaptive VAD and millisecond barge-in; a custom anti-aliasing streaming resampler converts 8k/16k/24k/48k; the uplink goes through Cloudflare Access + HMAC-SHA256 dual-layer auth straight into Gemini 3.8 Live full-duplex.</span>
         </div></div>
         <div class="row"><div class="lab">DETAIL</div><div class="txt">
-          <span class="zh">实测发现外放漏进麦克风的 <b>-30dB 级</b>极微弱回声就足以让模型在 300–600ms 内被误打断 → 改 Manual VAD + 客户端物理静音切分，在无硬件 AEC 场景下根治误打断；再用 backlog 探针治模型 4 倍速推流造成的播放积压。</span>
-          <span class="en">Measurement showed that echo leaking from the speaker at just <b>-30dB</b> was enough to falsely interrupt the model within 300–600ms → switched to manual VAD plus client-side physical mute segmentation, curing false barge-in with no hardware AEC. A backlog probe then fixed playback pile-up caused by the model streaming at 4× realtime.</span>
+          <span class="zh">实测发现外放漏进麦克风的 <b>-30dB 级</b>极微弱回声就足以让模型在 300–600ms 内被误打断 → 改用 Manual VAD + 客户端物理静音切分，该场景下不再误触发；再用 backlog 探针治模型 4 倍速推流造成的播放积压。</span>
+          <span class="en">Measurement showed that echo leaking from the speaker at just <b>-30dB</b> was enough to falsely interrupt the model within 300–600ms → switched to manual VAD plus client-side physical mute segmentation, after which that scenario stopped triggering false barge-in. A backlog probe then fixed playback pile-up caused by the model streaming at 4× realtime.</span>
         </div></div>
         <div class="row res"><div class="lab">RESULT</div><div class="txt">
-          <span class="zh">端到端首响稳定 <b>1.6–1.7s</b>（模型固有极限）、打断体感 <b>330ms</b> 内、工具调用往返 <b>31–44ms</b>；双机（nubia / 一加）实机跑通。最得意的一点：<b>异步任务主动插播</b>——电话里派出去的耗时任务由常驻进程执行，完工事件在模型讲话的间隙主动注入实时对话，挂断后下次来电自动补报未读回执。</span>
-          <span class="en">End-to-end first response holds at <b>1.6–1.7s</b> (the model's own floor), barge-in feels sub-<b>330ms</b>, tool round-trips run <b>31–44ms</b>; verified on two physical handsets (nubia / OnePlus). The part I like most: <b>proactive async interjection</b> — long tasks dispatched by voice run on the resident process, and completion events are injected into the live conversation in the gaps between the model's sentences. Hang up, and the next call replays whatever receipts you missed.</span>
+          <span class="zh">现有链路实测：端到端首响 <b>1.6–1.7s</b>、打断体感 <b>330ms</b> 内、工具调用往返 <b>31–44ms</b>（2026-09，取自服务日志）；双机（nubia / 一加）实机跑通。最得意的一点：<b>异步任务插播</b>——电话里派出去的耗时任务由常驻进程执行，完工事件在模型讲话的间隙注入实时对话；挂断后下次来电补报未读回执。<br><span style="color:var(--fg-faint)">（<b style="color:var(--vi)">由它主动回拨给你</b>目前尚未实现，是赛期的探索项，不作为演示成立的前提。）</span></span>
+          <span class="en">Measured on the current link: end-to-end first response <b>1.6–1.7s</b>, barge-in perceived under <b>330ms</b>, tool round-trips <b>31–44ms</b> (Sept 2026, from service logs); verified on two physical handsets (nubia / OnePlus). The part I like most: <b>async task interjection</b> — long tasks dispatched by voice run on the resident process, and completion events are injected into the live conversation in the gaps between the model's sentences; hang up, and the next call replays the receipts you missed.<br><span style="color:var(--fg-faint)">(Having it <b style="color:var(--vi)">place the outbound call back to you</b> is not built yet — an exploration item for the hackathon, not a premise any demo depends on.)</span></span>
         </div></div>
       </div>
       <div class="mini"><span>Telecom CALL_PROVIDER</span><span>Duplex VoiceLink</span><span>Anti-alias resampler</span><span>Cloudflare Access</span><span>HMAC-SHA256</span></div>
@@ -461,7 +473,7 @@ footer{border-top:1px solid var(--line);padding:26px 0 40px;font-family:var(--mo
         <div class="row"><div class="lab">BUILD</div><div class="txt">
           <span class="zh">把这些流程重构成 IM 群里一句话触发的自执行 Agent 流水线，自研 <b>30+ 生产级 Skill</b>：<br>
           <b>合规</b> — KYC/KYB 自动筛查（Acuris 通道）、PEP / 制裁 / 不利媒体命中分桶、风险评分与排除决策矩阵、自动产出合规报告；活体认证端到端自动化回归。<br>
-          <b>开户</b> — USD/HKD 多币种虚拟银行账户一键开立、批量开户流水线（扫 KYC 通过用户 → 地址翻译规整 → 串行开卡 → 开 VA → 汇总文档）、账户确认函自动渲染 PDF 回传客户群。<br>
+          <b>开户</b> — USD/HKD 多币种虚拟账户一键开立、批量开户流水线（扫 KYC 通过用户 → 地址翻译规整 → 串行开卡 → 开 VA → 汇总文档）、账户确认函自动渲染 PDF 回传客户群。<br>
           <b>发卡</b> — 对接持牌通道，企业 VISA 虚拟卡秒级发行。<br>
           <b>对账</b> — 发卡侧流水与本地账目双向核对、主资金池 vs 全卡余额差额审计、销卡残值异常扫描。<br>
           <b>运维</b> — staging/prod 配置比对热部署、工单智能代答、Figma vs 线上 UI 还原度数值化比对修复闭环。</span>
@@ -473,8 +485,8 @@ footer{border-top:1px solid var(--line);padding:26px 0 40px;font-family:var(--mo
           <b>Ops</b> — staging/prod config diff and hot deploy, AI ticket replies, and a numeric Figma-vs-live UI fidelity diff-and-fix loop.</span>
         </div></div>
         <div class="row res"><div class="lab">RESULT</div><div class="txt">
-          <span class="zh">原本跨部门周转的交付与运维效率提升 <b>80% 以上</b>。更重要的是：我对「Agent 进真实高风险行业」的边界、审计与可信度问题，有踩过坑的认知，而不是只有热情。</span>
-          <span class="en">Delivery and ops throughput on those cross-department flows improved by <b>over 80%</b>. More importantly: my view on where agents may and may not go in a high-stakes regulated industry — auditability, boundaries, trust — comes from scars, not enthusiasm.</span>
+          <span class="zh">这些流程现在都是群里一句话触发：<b>30+ 生产 Skill</b> 覆盖筛查、开户、发卡与对账，合规报告与账户确认函自动成文回传。更重要的是：我对「Agent 进真实高风险行业」的边界、审计与可信度问题，有踩过坑的认知，而不是只有热情。</span>
+          <span class="en">All of these now start with one sentence in a group chat: <b>30+ production skills</b> covering screening, onboarding, issuing and reconciliation, with compliance reports and account confirmation letters written and returned automatically. More importantly: my view on where agents may and may not go in a high-stakes regulated industry — auditability, boundaries, trust — comes from scars, not enthusiasm.</span>
         </div></div>
       </div>
       <div class="mini"><span>Acuris screening</span><span>VISA issuing</span><span>SGB multi-currency VA</span><span>Reconciliation audit</span><span>Liveness E2E</span><span>30+ skills</span></div>
@@ -486,8 +498,8 @@ footer{border-top:1px solid var(--line);padding:26px 0 40px;font-family:var(--mo
       <h3><span class="zh">wowapi.ai — 大模型网关与上游「验真」方法论</span><span class="en">wowapi.ai — LLM gateway &amp; upstream authenticity forensics</span></h3>
       <div class="pmr">
         <div class="row"><div class="lab">PAIN</div><div class="txt">
-          <span class="zh">中转与聚合市场里，「用廉价小模型套壳冒充顶流」是常态，而买家几乎没有验证手段。</span>
-          <span class="en">In the relay/aggregator market, cheap small models masquerading as flagship ones is routine — and buyers have almost no way to check.</span>
+          <span class="zh">走中转与聚合链路时，上游到底是哪个模型、怎么路由的，买家基本无从验证——只能听供应商自述。</span>
+          <span class="en">When you buy through a relay or aggregator, you have almost no way to verify which model is actually serving you or how the request is routed — you're taking the supplier's word for it.</span>
         </div></div>
         <div class="row"><div class="lab">BUILD</div><div class="txt">
           <span class="zh">自建高并发多模型聚合网关，并沉淀出一套<b>验真探针</b>：用长上下文记忆边界、逻辑陷阱、拒答指纹与生成风格识别套壳；用响应头特征、TLS 握手与延迟分布溯源请求是<b>直连官方 / 二次反代 / Bedrock·Vertex 托管</b>；深度处理 SSE 流式帧切片、token 计量核对与长上下文衰减实测。</span>
@@ -515,8 +527,8 @@ footer{border-top:1px solid var(--line);padding:26px 0 40px;font-family:var(--mo
           <span class="en">A dual-chain (EVM + Solana) social/prediction super-app (bitx.now). Privy frictionless auth, MoonPay fiat on-ramp, <b>gasless transactions via ERC-4337 Paymaster</b>, and self-hosted Matrix (Dendrite / Tuwunel) for decentralised messaging.</span>
         </div></div>
         <div class="row res"><div class="lab">Sigma</div><div class="txt">
-          <span class="zh">BNB Chain 超额抵押稳定币 bnbUSD + 收益聚合（sigma.money），深度接入 Curve 生态，<b>TVL 历史峰值 &gt; $650 万</b>。</span>
-          <span class="en">Over-collateralised stablecoin bnbUSD plus a yield aggregator on BNB Chain (sigma.money), deeply integrated with the Curve ecosystem. <b>Peak historical TVL &gt; $6.5M</b>.</span>
+          <span class="zh">BNB Chain 超额抵押稳定币 bnbUSD + 收益聚合（sigma.money），深度接入 Curve 生态，<b>协议 TVL 历史峰值 &gt; $650 万</b>。</span>
+          <span class="en">Over-collateralised stablecoin bnbUSD plus a yield aggregator on BNB Chain (sigma.money), deeply integrated with the Curve ecosystem. <b>Protocol peak TVL &gt; $6.5M</b>.</span>
         </div></div>
       </div>
       <div class="mini"><span>LMSR</span><span>AWS Lambda</span><span>ERC-4337</span><span>Matrix self-host</span><span>Jito bundles</span></div>
@@ -566,31 +578,53 @@ footer{border-top:1px solid var(--line);padding:26px 0 40px;font-family:var(--mo
     </div>
     <div class="tk-body">
       <div class="tk-copy">
-        <p>
-          <span class="zh"><b>会做「并行化」的 Agent 蜂群。</b>攻壳里塔奇克马每晚要做一次并行化：白天各自出勤，夜里同步记忆，然后<span class="hl">重新分化出各自的个性</span>。这正是今天多 Agent 系统最缺的一环——<b>我们会 fan-out，却不会合并经验。</b></span>
-          <span class="en"><b>An agent swarm that can actually do "parallelisation".</b> In Ghost in the Shell, the Tachikomas parallelise every night: they work apart by day, sync memory at night, then <span class="hl">re-differentiate back into individuals</span>. That is exactly the missing half of today's multi-agent systems — <b>we know how to fan out; we don't know how to merge experience.</b></span>
+        <p class="claim">
+          <span class="zh">「共享记忆，不必共享同一个判断。」</span>
+          <span class="en">"Share the memory — not the verdict."</span>
         </p>
-        <div class="flow">
-          <div><i>01</i><span class="zh">N 只异构模型塔奇克马（不同后端 = 不同性格）并行出勤</span><span class="en">N heterogeneous Tachikomas (different backend = different personality) deploy in parallel</span></div>
-          <div><i>02</i><span class="zh">记忆 diff → 冲突消解 → 合并为共享记忆</span><span class="en">memory diff → conflict resolution → merge into shared memory</span></div>
-          <div><i>03</i><span class="zh">下一轮带着共享记忆再次分化</span><span class="en">next round: re-differentiate, carrying the shared memory</span></div>
-          <div><i>04</i><span class="zh">评委<b style="color:var(--cy)">拿起电话</b>呼叫塔奇克马口述任务（CarVoice 链路），大屏实时显示每只在想什么、在哪产生分歧、如何达成会签</span><span class="en">a judge <b style="color:var(--cy)">picks up a phone</b> and briefs the swarm by voice (CarVoice link); the big screen shows live what each unit is thinking, where they disagree, and how they reach co-signature</span></div>
-          <div><i>05</i><span class="zh">干完活，它<b style="color:var(--cy)">主动打电话回来</b>汇报</span><span class="en">when the work is done, it <b style="color:var(--cy)">calls you back</b> to report</span></div>
+        <p>
+          <span class="zh">借用《攻壳机动队》里塔奇克马<b>共享经验</b>的意象：一群单元各自出勤，回来把学到的东西合并，再带着共享记忆重新出发。这次我想解决的具体问题是：<span class="hl">各个 Agent 的发现，哪些值得进入下一轮的共享记忆。</span></span>
+          <span class="en">Borrowing the image of the Tachikomas <b>sharing experience</b> from Ghost in the Shell: a group of units deploy separately, come back and merge what they learned, then set out again carrying the shared memory. The concrete problem I want to work on: <span class="hl">of everything the agents found, which findings deserve to enter the next round's shared memory.</span></span>
+        </p>
+
+        <div class="split">
+          <div class="col">
+            <h4 class="ok"><span class="zh">已有 · 可直接复用</span><span class="en">ALREADY BUILT · REUSABLE</span></h4>
+            <div class="flow">
+              <div><i>✓</i><span class="zh">多 Agent 并行调度与跨轮执行</span><span class="en">parallel multi-agent dispatch with cross-turn execution</span></div>
+              <div><i>✓</i><span class="zh">跨模型独立复核（会签）</span><span class="en">independent cross-model re-verification (co-signature)</span></div>
+              <div><i>✓</i><span class="zh">手机原生通话语音入口（双机跑通）</span><span class="en">native phone-call voice entry point (verified on two handsets)</span></div>
+            </div>
+          </div>
+          <div class="col">
+            <h4 class="wip"><span class="zh">赛期拟新增 · 现场要做的</span><span class="en">TO BE BUILT ON SITE</span></h4>
+            <div class="flow">
+              <div><i>+</i><span class="zh">候选经验的证据校验与冲突挂起</span><span class="en">evidence checks on candidate findings, with conflicts put on hold</span></div>
+              <div><i>+</i><span class="zh">带来源 / 版本 / 可撤回的共享记忆</span><span class="en">shared memory with provenance, versioning and revocability</span></div>
+              <div><i>+</i><span class="zh">分歧可视化</span><span class="en">visualising where the agents disagree</span></div>
+              <div><i>+</i><span class="zh">下一轮行为是否真的改变的对照验证</span><span class="en">a controlled check on whether the next round's behaviour actually changed</span></div>
+            </div>
+          </div>
         </div>
-        <p style="margin-top:16px">
-          <span class="zh"><b>可信度：</b>舰队并行、跨轮保活、跨模型会签、系统级语音入口——<b>都已经在生产里跑了几个月</b>。96 小时里做的是真正的新东西：<span class="hl">记忆的并行化、分歧的可视化，以及一个能被人类拿起听筒呼叫的躯壳。</span></span>
-          <span class="en"><b>Why it's credible:</b> fleet parallelism, cross-turn survival, cross-model co-signature and the system-level voice entry point have <b>all been running in production for months</b>. What the 96 hours buy is the genuinely new part: <span class="hl">parallelising memory, visualising disagreement, and a shell a human can pick up a handset and call.</span></span>
+
+        <p style="margin-top:18px">
+          <span class="zh"><b>现场动线：</b>评委可以<span class="hl">拿起电话</span>口述任务（走已跑通的 CarVoice 链路），蜂群并行开工，大屏实时显示每只单元在看什么、在哪产生分歧、怎么合并；完工结果在<span class="hl">通话中插播</span>回来。</span>
+          <span class="en"><b>On-site flow:</b> a judge can <span class="hl">pick up a phone</span> and brief it by voice (over the CarVoice link that already works), the swarm starts working in parallel, and the big screen shows live what each unit is looking at, where they diverge and how it merges; finished results are <span class="hl">interjected back into the call</span>.</span>
+        </p>
+        <p class="caveat">
+          <span class="zh">// 名字只是致敬，差异化靠机制不靠梗。上面「已有」的部分现在就能演示；「赛期拟新增」的部分现在还不存在，我不会把它说成已经做好了。</span>
+          <span class="en">// The name is just an homage; the differentiation is in the mechanism, not the reference. Everything under "already built" can be demoed today. Everything under "to be built" does not exist yet, and I won't pretend otherwise.</span>
         </p>
       </div>
 
       <div>
         <div class="viz">
           <canvas id="swarm" aria-label="multi-agent swarm visualisation" role="img"></canvas>
-          <div class="viz-bar"><span id="phase">BOOT</span><span id="tick">UNITS 7 / SYNC 0</span></div>
+          <div class="viz-bar"><span id="phase">BOOT</span><span id="tick">UNITS 7 / MERGE 0</span></div>
         </div>
         <div class="viz-cap">
-          <span class="zh">// 7 只异构后端单元并行出勤 → 周期性收束做记忆合并 → 带着共享记忆重新分化</span>
-          <span class="en">// 7 heterogeneous backend units deploy in parallel → periodically converge to merge memory → re-differentiate carrying it</span>
+          <span class="zh">// 一条需求 fan-out ≤7 个独立子会话并行 → 周期性收束做记忆合并 → 带着共享记忆再分化。左半（并行调度 / 跨轮存活）已在用，合并那一步的证据校验是赛期要做的。</span>
+          <span class="en">// one request fans out to ≤7 independent sub-sessions running in parallel → they periodically converge to merge memory → then re-differentiate carrying it. The fan-out and cross-turn survival already work; the evidence-checking inside the merge is what the hackathon is for.</span>
         </div>
       </div>
     </div>
@@ -646,8 +680,8 @@ footer{border-top:1px solid var(--line);padding:26px 0 40px;font-family:var(--mo
       <div class="who"><span class="zh">Regtank（新加坡）/ SPXpay</span><span class="en">Regtank (Singapore) / SPXpay</span></div>
       <div class="role"><span class="zh">技术负责人 · 高级全栈工程师（远程）</span><span class="en">Tech lead · senior full-stack engineer (remote)</span></div>
       <div class="what">
-        <span class="zh">合规科技（AML / KYC / KYB 风险筛查）与加拿大 FINTRAC 持牌跨境支付。主导支付合规核心后端：Acuris 通道自动化筛查链路、UQPAY 企业 VISA 虚拟卡秒级发行与流水核对、SGB 通道 USD/HKD 多币种虚拟银行账户开立与清结算；并把开户、发卡、费率配置、合规复核全流程 Agent 化。</span>
-        <span class="en">Regtech (AML / KYC / KYB screening) and FINTRAC-licensed cross-border payments. Led the core payments-compliance backend: automated Acuris screening pipelines, second-scale corporate VISA virtual card issuing through UQPAY with flow reconciliation, and USD/HKD multi-currency virtual bank accounts plus settlement via the SGB channel — then turned onboarding, issuing, rate configuration and compliance review into agent pipelines.</span>
+        <span class="zh">合规科技（AML / KYC / KYB 风险筛查）与加拿大 FINTRAC 持牌跨境支付。主导支付合规核心后端：Acuris 通道自动化筛查链路、持牌通道的企业 VISA 虚拟卡秒级发行与流水核对、银行通道 USD/HKD 多币种虚拟账户开立与清结算；并把开户、发卡、费率配置、合规复核全流程 Agent 化。</span>
+        <span class="en">Regtech (AML / KYC / KYB screening) and FINTRAC-licensed cross-border payments. Led the core payments-compliance backend: automated Acuris screening pipelines, second-scale corporate VISA virtual card issuing through a licensed channel with flow reconciliation, and USD/HKD multi-currency virtual accounts plus settlement through a bank channel — then turned onboarding, issuing, rate configuration and compliance review into agent pipelines.</span>
       </div>
     </div>
     <div class="it">
@@ -794,15 +828,18 @@ footer{border-top:1px solid var(--line);padding:26px 0 40px;font-family:var(--mo
     var cmdEl=document.getElementById("tw"), outEl=document.getElementById("twout");
     if(!cmdEl) return;
     var SEQ=[
-      {c:"tachikoma --dispatch 7 --sync memory",
-       o:["<span style='color:var(--cy)'>[ok]</span> 7 units deployed · claude · gpt · gemini · mimo · grok · antigravity · codex",
-          "<span style='color:var(--cy)'>[ok]</span> memory merged · 0 conflicts · re-individualising"]},
-      {c:"cc-lark fleet status --production",
-       o:["<span style='color:var(--cy)'>[ok]</span> 6 backends · 8 bots · 30+ skills · uptime: months",
-          "<span style='color:var(--cy)'>[ok]</span> 14,000,000,000 tokens / 30d — all of it on real systems"]},
-      {c:"dial 8888  # call the swarm, brief it by voice",
+      {c:"cc-lark dispatch --fanout 7",
+       o:["<span style='color:var(--cy)'>[ok]</span> 7 sub-sessions dispatched · running in parallel · surviving the turn",
+          "<span style='color:var(--cy)'>[ok]</span> each reports back · main agent woken to aggregate"]},
+      {c:"cc-lark fleet status",
+       o:["<span style='color:var(--cy)'>[ok]</span> 6 agent backends · 8 bots · 30+ production skills",
+          "<span style='color:var(--cy)'>[ok]</span> 14,000,000,000 tokens / 30d  (API-equivalent accounting)"]},
+      {c:"dial 8888   # brief the swarm by voice",
        o:["<span style='color:var(--cy)'>[ok]</span> first response 1.6s · barge-in 330ms · tool rtt 31ms",
-          "<span style='color:var(--cy)'>[ok]</span> job done — calling you back"]}
+          "<span style='color:var(--cy)'>[ok]</span> results interjected mid-call; unread receipts replayed next call"]},
+      {c:"tachikoma memory merge --provenance",
+       o:["<span style='color:var(--vi)'>[wip]</span> evidence check · conflict hold · revocable shared memory",
+          "<span style='color:var(--vi)'>[wip]</span> to be built on site @ evotavern"]}
     ];
     if(reduce){
       cmdEl.textContent=SEQ[0].c;
@@ -835,10 +872,10 @@ footer{border-top:1px solid var(--line);padding:26px 0 40px;font-family:var(--mo
   (function(){
     var cv=document.getElementById("swarm"); if(!cv) return;
     var ctx=cv.getContext("2d",{alpha:false});
-    var NAMES=["CLAUDE","GPT","GEMINI","CODEX","MIMO","GROK","ANTIGRAV"];
+    var NAMES=["UNIT-01","UNIT-02","UNIT-03","UNIT-04","UNIT-05","UNIT-06","UNIT-07"];
     var N=NAMES.length, units=[], W=0,H=0,DPR=1;
     var phaseEl=document.getElementById("phase"), tickEl=document.getElementById("tick");
-    var syncCount=0, t=0, running=false, visible=true;
+    var mergeCount=0, t=0, running=false, visible=true;
 
     function css(v){ return getComputedStyle(root).getPropertyValue(v).trim(); }
     function resize(){
@@ -875,7 +912,7 @@ footer{border-top:1px solid var(--line);padding:26px 0 40px;font-family:var(--mo
       if(ph.k!==lastK){
         lastK=ph.k;
         if(phaseEl) phaseEl.textContent=ph.name;
-        if(ph.k===2){ syncCount++; if(tickEl) tickEl.textContent="UNITS "+N+" / SYNC "+syncCount; }
+        if(ph.k===2){ mergeCount++; if(tickEl) tickEl.textContent="UNITS "+N+" / MERGE "+mergeCount; }
       }
       var bg=root.getAttribute("data-theme")==="light"?"#f7fafa":"#04070a";
       var CY=css("--cy")||"#00fff0", VI=css("--vi")||"#b47cff", FAINT=css("--fg-faint")||"#4c5c66";
@@ -959,7 +996,7 @@ footer{border-top:1px solid var(--line);padding:26px 0 40px;font-family:var(--mo
       // corner hud
       ctx.textAlign="left"; ctx.textBaseline="top";
       ctx.fillStyle=hexA(FAINT,.7);
-      ctx.fillText("TACHIKOMA SWARM",10,9);
+      ctx.fillText("FAN-OUT \u2264 7 \u00b7 PARALLEL SUB-SESSIONS",10,9);
       ctx.textAlign="right";
       ctx.fillStyle=hexA(CY,.75);
       ctx.fillText("t="+(t/1000).toFixed(1)+"s",W-10,9);
