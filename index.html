@@ -166,6 +166,33 @@ h2{font-size:clamp(1.5rem,4.2vw,2.3rem);margin:0;font-weight:600;letter-spacing:
 .sec-sub{font-family:var(--mono);font-size:11.5px;color:var(--fg-faint);letter-spacing:.08em}
 .rule{height:1px;background:linear-gradient(90deg,var(--line-2),transparent);margin-bottom:34px}
 
+/* proof / video */
+.proof{display:grid;gap:26px;align-items:center}
+@media(min-width:900px){.proof{grid-template-columns:minmax(0,1fr) auto;gap:44px}}
+.phone{position:relative;justify-self:center;width:min(300px,72vw);
+  border:1px solid var(--line-2);border-radius:28px;padding:9px;background:#04070a;
+  box-shadow:0 0 44px rgba(0,255,240,.13),0 22px 64px rgba(0,0,0,.55)}
+.phone{order:-1}
+@media(min-width:900px){.phone{width:clamp(220px,32vh,300px);order:0}}
+html[data-theme="light"] .phone{background:#0d1416;box-shadow:0 0 30px rgba(0,142,134,.12),0 18px 44px rgba(0,0,0,.22)}
+.phone::before{content:"";position:absolute;top:2px;left:50%;transform:translateX(-50%);
+  width:52px;height:4px;border-radius:3px;background:var(--line-2)}
+.phone video{display:block;width:100%;height:auto;border-radius:21px;background:#000}
+.phone .tagpill{position:absolute;top:-11px;left:50%;transform:translateX(-50%);white-space:nowrap;
+  font-family:var(--mono);font-size:9.5px;letter-spacing:.16em;color:var(--cy);
+  background:var(--bg);border:1px solid var(--line-2);padding:3px 9px;border-radius:2px}
+.proof h3{margin:0 0 10px;font-size:clamp(1.15rem,3vw,1.5rem);font-weight:600;letter-spacing:-.01em;line-height:1.35}
+.proof .lede{color:var(--fg-dim);font-size:.95rem;margin:0 0 16px}
+.proof .lede b{color:var(--fg);font-weight:600}
+.proof .lede .hl{color:var(--cy)}
+.checks{display:grid;gap:8px;margin:0 0 14px;font-size:.89rem}
+.checks div{display:grid;grid-template-columns:16px 1fr;gap:9px;color:var(--fg-dim);align-items:start}
+.checks i{color:var(--cy);font-style:normal;font-family:var(--mono);font-size:11px;padding-top:3px}
+.checks b{color:var(--fg);font-weight:600}
+.fineprint{font-family:var(--mono);font-size:10px;color:var(--fg-faint);line-height:1.7;
+  border-top:1px solid var(--line);padding-top:11px}
+html[data-lang="zh"] .fineprint{font-family:var(--cjk);font-size:11px}
+
 /* numbers */
 .nums{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--line);border:1px solid var(--line)}
 @media(min-width:900px){.nums{grid-template-columns:repeat(5,1fr)}}
@@ -292,6 +319,7 @@ footer{border-top:1px solid var(--line);padding:26px 0 40px;font-family:var(--mo
   <div class="bar-in">
     <div class="sig">LU YIXIN <b>/ LOUIE</b></div>
     <nav class="bar-nav">
+      <a href="#proof"><span class="zh">实拍</span><span class="en">PROOF</span></a>
       <a href="#numbers"><span class="zh">数据</span><span class="en">NUMBERS</span></a>
       <a href="#work"><span class="zh">作品</span><span class="en">WORK</span></a>
       <a href="#tachikoma">TACHIKOMA</a>
@@ -342,7 +370,7 @@ footer{border-top:1px solid var(--line);padding:26px 0 40px;font-family:var(--mo
   </div>
 
   <div class="cta">
-    <a class="primary" href="#work"><span class="zh">▸ 看作品</span><span class="en">▸ SEE THE WORK</span></a>
+    <a class="primary" href="#proof"><span class="zh">▸ 看 51 秒实拍</span><span class="en">▸ WATCH THE 51s PROOF</span></a>
     <a href="https://github.com/yixin-1024" target="_blank" rel="noopener">▸ GITHUB</a>
     <a href="#tachikoma"><span class="zh">▸ 正在做的：塔奇克马</span><span class="en">▸ NOW BUILDING: TACHIKOMA</span></a>
   </div>
@@ -371,10 +399,54 @@ footer{border-top:1px solid var(--line);padding:26px 0 40px;font-family:var(--mo
   <div class="scroll-hint">SCROLL ↓</div>
 </section>
 
+<!-- ===================== PROOF ===================== -->
+<section id="proof">
+  <div class="sec-head rv">
+    <span class="sec-idx">// 01</span>
+    <h2><span class="zh">实拍证据</span><span class="en">PROOF</span></h2>
+    <span class="sec-sub"><span class="zh">51 秒手机实拍，不是效果图</span><span class="en">51 seconds, filmed off a real handset — not a mockup</span></span>
+  </div>
+  <div class="rule"></div>
+
+  <div class="proof rv">
+    <div>
+      <h3>
+        <span class="zh">拨号盘输入 <span style="color:var(--cy)">8888</span>，在系统原生通话界面里接你电话的是 Agent</span>
+        <span class="en">Dial <span style="color:var(--cy)">8888</span> — the thing answering inside the system's own call UI is an agent</span>
+      </h3>
+      <p class="lede">
+        <span class="zh">用手机自带的拨号盘拨 8888，进入的是 <b>系统原生通话界面</b>（<code style="font-family:var(--mono);font-size:.85em;color:var(--cy)">com.android.dialer</code>，不是 App 自己画的），<span class="hl">这台手机连 SIM 卡都没插</span>。全程只用嘴说话：问它现在有几个定时任务，它答「目前只有一个定时任务在运行」，并说明自己能调度各种助手去写代码、排查问题、设提醒和定时任务。</span>
+        <span class="en">Dialling 8888 from the phone's own dialler opens the <b>system-native in-call screen</b> (<code style="font-family:var(--mono);font-size:.85em;color:var(--cy)">com.android.dialer</code>, not a screen the app drew), and <span class="hl">this handset has no SIM card in it</span>. Everything after that is voice: asked how many scheduled jobs are running, it answers that exactly one is, and explains it can dispatch assistants to write code, debug problems, and set reminders and scheduled tasks.</span>
+      </p>
+      <div class="checks">
+        <div><i>▸</i><span><span class="zh"><b>系统原生通话界面</b>，由 Telecom <code style="font-family:var(--mono);font-size:.85em">CALL_PROVIDER</code> 拿到，不需要特权</span><span class="en"><b>System-native call UI</b>, obtained via Telecom <code style="font-family:var(--mono);font-size:.85em">CALL_PROVIDER</code> — no privileged permissions</span></span></div>
+        <div><i>▸</i><span><span class="zh"><b>无 SIM 卡</b>也能拨通，车机外放与蓝牙天然承接</span><span class="en">Works <b>with no SIM</b>; car speakers and Bluetooth are inherited for free</span></span></div>
+        <div><i>▸</i><span><span class="zh"><b>全双工语音</b>，说完即答（现有链路实测首响 1.6–1.7s、打断体感 330ms 内）</span><span class="en"><b>Full-duplex voice</b>, answers as you finish (measured on the current link: 1.6–1.7s to first response, barge-in under 330ms)</span></span></div>
+        <div><i>▸</i><span><span class="zh">通话中可<b>插播</b>后台任务的完工结果；挂断后下次来电<b>补报未读回执</b></span><span class="en">Finished background tasks can be <b>interjected mid-call</b>; hang up and the next call <b>replays the unread receipts</b></span></span></div>
+      </div>
+      <div class="fineprint">
+        <span class="zh">// 手机实拍录屏，字幕为后期标注。画面中的状态栏 / 通知区与通话记录区已做模糊处理。<a href="media/car-ai-call-demo.mp4" style="color:var(--cy);text-decoration:none;border-bottom:1px solid var(--line-2)">直接下载原片 ↗</a></span>
+        <span class="en">// Screen recording from the handset; subtitles added afterwards. The status bar, notification area and call log in frame have been blurred. <a href="media/car-ai-call-demo.mp4" style="color:var(--cy);text-decoration:none;border-bottom:1px solid var(--line-2)">Download the clip ↗</a></span>
+      </div>
+    </div>
+
+    <div class="phone">
+      <span class="tagpill">LIVE CAPTURE · 51s</span>
+      <video muted playsinline loop controls preload="metadata"
+             poster="media/car-ai-call-demo-poster.jpg"
+             aria-label="Demo: dialling 8888 from the system dialler and talking to an agent in the native call UI">
+        <source src="media/car-ai-call-demo.mp4" type="video/mp4">
+        <span class="zh">你的浏览器不支持内嵌视频，可以 <a href="media/car-ai-call-demo.mp4">直接下载这段 51 秒实拍</a>。</span>
+        <span class="en">Your browser can't play embedded video — <a href="media/car-ai-call-demo.mp4">download the 51-second clip</a> instead.</span>
+      </video>
+    </div>
+  </div>
+</section>
+
 <!-- ===================== NUMBERS ===================== -->
 <section id="numbers">
   <div class="sec-head rv">
-    <span class="sec-idx">// 01</span>
+    <span class="sec-idx">// 02</span>
     <h2><span class="zh">硬数据</span><span class="en">HARD NUMBERS</span></h2>
     <span class="sec-sub"><span class="zh">每个数字都在下方标了来源</span><span class="en">every figure carries its source, below</span></span>
   </div>
@@ -400,7 +472,7 @@ footer{border-top:1px solid var(--line);padding:26px 0 40px;font-family:var(--mo
 <!-- ===================== WORK ===================== -->
 <section id="work">
   <div class="sec-head rv">
-    <span class="sec-idx">// 02</span>
+    <span class="sec-idx">// 03</span>
     <h2><span class="zh">作品</span><span class="en">WORK</span></h2>
     <span class="sec-sub"><span class="zh">痛点 → 做法 → 结果</span><span class="en">pain → approach → result</span></span>
   </div>
@@ -436,7 +508,7 @@ footer{border-top:1px solid var(--line);padding:26px 0 40px;font-family:var(--mo
 
     <!-- CarVoice -->
     <article class="card rv">
-      <div class="card-tag">◆ EMBODIED / VOICE<span class="chip">ANDROID</span><span class="chip">GEMINI LIVE</span></div>
+      <div class="card-tag">◆ EMBODIED / VOICE<span class="chip">ANDROID</span><span class="chip">GEMINI LIVE</span><a class="chip" href="#proof" style="color:var(--cy);border-color:var(--line-2);text-decoration:none">▸ <span class="zh">看实拍</span><span class="en">WATCH THE PROOF</span></a></div>
       <h3>CarVoice · CCVoice</h3>
       <p class="lede"><span class="zh">拿起手机拨个号，就能指挥一支 Agent 蜂群。</span><span class="en">Pick up a phone, dial a number, command an agent swarm.</span></p>
       <div class="pmr">
@@ -560,7 +632,7 @@ footer{border-top:1px solid var(--line);padding:26px 0 40px;font-family:var(--mo
 <!-- ===================== TACHIKOMA ===================== -->
 <section id="tachikoma">
   <div class="sec-head rv">
-    <span class="sec-idx">// 03</span>
+    <span class="sec-idx">// 04</span>
     <h2><span class="zh">正在做</span><span class="en">NOW BUILDING</span></h2>
     <span class="sec-sub">@ EVOTAVERN SHENZHEN · 2026.09.21 → 09.24</span>
   </div>
@@ -634,7 +706,7 @@ footer{border-top:1px solid var(--line);padding:26px 0 40px;font-family:var(--mo
 <!-- ===================== STACK ===================== -->
 <section id="stack">
   <div class="sec-head rv">
-    <span class="sec-idx">// 04</span>
+    <span class="sec-idx">// 05</span>
     <h2><span class="zh">技术栈</span><span class="en">STACK</span></h2>
   </div>
   <div class="rule"></div>
@@ -669,7 +741,7 @@ footer{border-top:1px solid var(--line);padding:26px 0 40px;font-family:var(--mo
 <!-- ===================== TIMELINE ===================== -->
 <section id="timeline">
   <div class="sec-head rv">
-    <span class="sec-idx">// 05</span>
+    <span class="sec-idx">// 06</span>
     <h2><span class="zh">履历</span><span class="en">TIMELINE</span></h2>
     <span class="sec-sub"><span class="zh">倒序</span><span class="en">reverse chronological</span></span>
   </div>
@@ -713,7 +785,7 @@ footer{border-top:1px solid var(--line);padding:26px 0 40px;font-family:var(--mo
 <!-- ===================== CONTACT ===================== -->
 <section id="contact">
   <div class="sec-head rv">
-    <span class="sec-idx">// 06</span>
+    <span class="sec-idx">// 07</span>
     <h2><span class="zh">联系</span><span class="en">CONTACT</span></h2>
     <span class="sec-sub"><span class="zh">现居广东湛江 · 支持远程 / 可赴深圳现场</span><span class="en">Zhanjiang, Guangdong · remote-friendly · on-site in Shenzhen</span></span>
   </div>
