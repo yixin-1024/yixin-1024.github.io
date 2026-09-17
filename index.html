@@ -140,7 +140,8 @@ h1.name .cn{display:block;font-family:var(--cjk);letter-spacing:.06em;font-size:
 .term-top i:first-child{background:var(--cy);opacity:.8}
 .term-body{padding:14px 14px 16px;font-family:var(--mono);font-size:clamp(11.5px,2.5vw,13px);line-height:1.9;color:var(--fg-dim);min-height:104px}
 .term-body .p{color:var(--cy)}
-.term-disclaimer{margin-top:10px;padding-top:9px;border-top:1px dashed var(--line);font-family:var(--mono);font-size:.82em;color:var(--vi);opacity:.95;letter-spacing:.02em}
+.term-disclaimer{margin-top:11px;padding:9px 10px 0;border-top:1px dashed var(--line-2);font-family:var(--mono);font-size:.8rem;line-height:1.5;color:var(--vi);opacity:1;letter-spacing:.02em}
+html[data-lang="zh"] .term-disclaimer{font-family:var(--cjk);font-size:.82rem}
 .term-body .out{color:var(--fg)}
 .cursor{display:inline-block;width:8px;height:1.05em;background:var(--cy);vertical-align:-2px;animation:bl 1s steps(2) infinite}
 .cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:32px}
@@ -562,8 +563,20 @@ footer{border-top:1px solid var(--line);padding:26px 0 40px;font-family:var(--mo
           <span class="zh">这些流程现在都是群里一句话触发：<b>30+ 生产 Skill</b> 覆盖筛查、开户、发卡与对账，合规报告与账户确认函自动成文回传。更重要的是：我对「Agent 进真实高风险行业」的边界、审计与可信度问题，有踩过坑的认知，而不是只有热情。</span>
           <span class="en">All of these now start with one sentence in a group chat: <b>30+ production skills</b> covering screening, onboarding, issuing and reconciliation, with compliance reports and account confirmation letters written and returned automatically. More importantly: my view on where agents may and may not go in a high-stakes regulated industry — auditability, boundaries, trust — comes from scars, not enthusiasm.</span>
         </div></div>
+        <div class="row"><div class="lab">ALSO</div><div class="txt">
+          <span class="zh"><b>另外三块独立实现</b>——与上面那条支付流水线<b>各自独立</b>，不是同一套系统，也没有打通：<br>
+          · <b>聊天记账助手</b>：把聊天流里零散的订单信息变成结构化记录，做去重、人工优先填空、写后回读校验<br>
+          · <b>多币种复式账本</b>：Decimal 精度、借贷平衡校验、确定性锁序<br>
+          · <b>链上风控（KYT）</b>：CLI → API → 风险数据服务的查询与订阅管理；<span style="color:var(--fg-faint)">风险数据由第三方合规数据源提供，不是自建风险库</span><br>
+          <span style="color:var(--fg-faint)">以上均为参与 / 主导实现。</span></span>
+          <span class="en"><b>Three further implementations</b>, each <b>standing on its own</b> — separate systems from the payments pipeline above, not wired together:<br>
+          · <b>Chat bookkeeping assistant</b>: turns scattered order details in a chat stream into structured records — deduplication, human-first gap filling, read-back verification after write<br>
+          · <b>Multi-currency double-entry ledger</b>: decimal precision, debit/credit balance checks, deterministic lock ordering<br>
+          · <b>On-chain risk screening (KYT)</b>: query and subscription management across CLI → API → risk data service; <span style="color:var(--fg-faint)">the risk data comes from a third-party compliance data source, not a risk database of my own</span><br>
+          <span style="color:var(--fg-faint)">Built or led the implementation of each.</span></span>
+        </div></div>
       </div>
-      <div class="mini"><span>Acuris screening</span><span>VISA issuing</span><span>SGB multi-currency VA</span><span>Reconciliation audit</span><span>Liveness E2E</span><span>30+ skills</span></div>
+      <div class="mini"><span>Acuris screening</span><span>VISA issuing</span><span>SGB multi-currency VA</span><span>Reconciliation audit</span><span>Liveness E2E</span><span>30+ skills</span><span>Chat bookkeeping</span><span>Double-entry ledger</span><span>KYT screening</span></div>
     </article>
 
     <!-- wowapi -->
