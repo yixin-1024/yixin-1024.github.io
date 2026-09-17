@@ -1,1129 +1,122 @@
-<!DOCTYPE html>
-<html lang="zh-CN" data-lang="zh" data-theme="dark">
+<!doctype html>
+<html lang="zh-CN">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="color-scheme" content="dark light">
-<title>卢一鑫 Louie · Agent 工程 / 多 Agent 舰队</title>
-<meta name="description" content="卢一鑫 (Louie) — 全栈工程师 / 系统架构 / 多 Agent 工程实践者。近 30 天约 140 亿 token（API 等值口径）。cc-lark 多 Agent 舰队 · CarVoice 语音入口 · 金融合规垂类 Agent。">
-<meta property="og:title" content="卢一鑫 Louie · Agent 工程 / 多 Agent 舰队">
-<meta property="og:description" content="共享记忆，不必共享同一个判断。多 Agent 并行调度 · 跨模型会签 · 手机原生通话语音入口。">
-<meta property="og:type" content="profile">
-<meta property="og:url" content="https://yixin-1024.github.io">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23050709'/%3E%3Cpath d='M16 5a11 11 0 1 0 0 22 11 11 0 0 0 0-22zm0 4.2a6.8 6.8 0 1 1 0 13.6 6.8 6.8 0 0 1 0-13.6z' fill='%2300fff0'/%3E%3Ccircle cx='16' cy='16' r='2.6' fill='%2300fff0'/%3E%3C/svg%3E">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Space+Grotesk:wght@400;500;600;700&display=swap">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Louie</title>
+<meta name="description" content="做 Agent 系统的工程师。多 Agent 调度、实时语音入口、金融合规场景的自动化。">
+<meta property="og:title" content="Louie">
+<meta property="og:description" content="做 Agent 系统的工程师。">
+<meta name="robots" content="index,follow">
 <style>
-/* ============ tokens ============ */
 :root{
-  --bg:#05070a; --bg-2:#080c11; --panel:rgba(12,18,24,.72); --panel-2:rgba(9,13,18,.55);
-  --line:rgba(0,255,240,.14); --line-2:rgba(0,255,240,.30);
-  --fg:#d6e4e8; --fg-dim:#7d8f98; --fg-faint:#4c5c66;
-  --cy:#00fff0; --cy-deep:#00b5ac; --vi:#b47cff; --warn:#ff4d6d;
-  --glow:0 0 24px rgba(0,255,240,.14);
-  --mono:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
-  --sans:'Space Grotesk','PingFang SC','Hiragino Sans GB','Microsoft YaHei',system-ui,sans-serif;
-  --cjk:'PingFang SC','Hiragino Sans GB','Microsoft YaHei',system-ui,sans-serif;
-  --maxw:1120px; --grain:.035;
+  --bg:#fbfaf8; --fg:#1c1b19; --dim:#6b6862; --line:#e2dfd8; --acc:#8a5a33;
+  --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,monospace;
 }
-html[data-theme="light"]{
-  --bg:#eef1f2; --bg-2:#e6eaec; --panel:rgba(255,255,255,.78); --panel-2:rgba(255,255,255,.5);
-  --line:rgba(0,90,86,.18); --line-2:rgba(0,90,86,.36);
-  --fg:#10181c; --fg-dim:#4a5a61; --fg-faint:#8195a0;
-  --cy:#008e86; --cy-deep:#00635d; --vi:#6b3fd4;
-  --glow:0 0 20px rgba(0,142,134,.12); --grain:.02;
+@media (prefers-color-scheme:dark){
+  :root{ --bg:#141412; --fg:#e8e5df; --dim:#918d85; --line:#2b2a27; --acc:#c2926a; }
 }
 *{box-sizing:border-box}
-html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+html{-webkit-text-size-adjust:100%}
 body{
-  margin:0;background:var(--bg);color:var(--fg);
-  font-family:var(--sans);font-size:16px;line-height:1.65;
-  overflow-x:hidden;-webkit-font-smoothing:antialiased;
+  margin:0; background:var(--bg); color:var(--fg);
+  font:400 17px/1.75 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  padding:0 24px;
 }
-html[data-lang="zh"] body{font-family:var(--cjk)}
-html[data-lang="zh"] .en{display:none!important}
-html[data-lang="en"] .zh{display:none!important}
-::selection{background:var(--cy);color:#04070a}
-
-/* ============ ambient layers ============ */
-.bg-grid,.bg-scan,.bg-vig{position:fixed;inset:0;pointer-events:none;z-index:0}
-.bg-grid{
-  background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);
-  background-size:64px 64px;opacity:.5;
-  mask-image:radial-gradient(ellipse 90% 70% at 50% 0%,#000 10%,transparent 78%);
-  -webkit-mask-image:radial-gradient(ellipse 90% 70% at 50% 0%,#000 10%,transparent 78%);
+.wrap{max-width:640px; margin:0 auto; padding:96px 0 120px}
+h1{font-size:19px; font-weight:600; letter-spacing:.01em; margin:0 0 6px}
+.sub{color:var(--dim); font-size:15px; margin:0 0 56px}
+h2{
+  font-size:13px; font-weight:600; letter-spacing:.09em; text-transform:uppercase;
+  color:var(--dim); margin:0 0 20px; padding-bottom:9px; border-bottom:1px solid var(--line);
 }
-.bg-scan{
-  background:repeating-linear-gradient(to bottom,rgba(0,0,0,.22) 0 1px,transparent 1px 3px);
-  opacity:.5;mix-blend-mode:overlay;
+section{margin:0 0 56px}
+p{margin:0 0 16px}
+.lead{font-size:18px; line-height:1.7}
+ul{margin:0; padding:0; list-style:none}
+li{margin:0 0 26px}
+li:last-child{margin-bottom:0}
+.t{font-weight:600; margin:0 0 5px}
+.t .meta{font-weight:400; color:var(--dim); font-size:14px; margin-left:8px}
+.d{color:var(--dim); font-size:15.5px; line-height:1.72; margin:0}
+a{color:var(--fg); text-decoration:none; border-bottom:1px solid var(--line); transition:border-color .15s}
+a:hover{border-color:var(--acc)}
+a.plain{border:none}
+.num{font-family:var(--mono); font-size:14px; color:var(--dim)}
+figure{margin:0}
+video{
+  display:block; width:100%; max-width:258px; height:auto; margin:0 0 12px;
+  border:1px solid var(--line); border-radius:9px; background:#000;
 }
-html[data-theme="light"] .bg-scan{opacity:.18}
-.bg-vig{background:radial-gradient(ellipse 120% 80% at 50% -10%,rgba(0,255,240,.07),transparent 60%)}
-.noise{position:fixed;inset:-50%;z-index:0;pointer-events:none;opacity:var(--grain);
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)'/%3E%3C/svg%3E");
-  animation:grain 1.2s steps(3) infinite}
-@keyframes grain{0%{transform:translate(0,0)}33%{transform:translate(-2%,1%)}66%{transform:translate(1%,-2%)}100%{transform:translate(0,0)}}
-
-/* ============ chrome ============ */
-.wrap{position:relative;z-index:2;max-width:var(--maxw);margin:0 auto;padding:0 clamp(18px,4vw,40px)}
-header.bar{
-  position:fixed;top:0;left:0;right:0;z-index:50;
-  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
-  background:color-mix(in srgb,var(--bg) 72%,transparent);
-  border-bottom:1px solid var(--line);
-}
-.bar-in{max-width:var(--maxw);margin:0 auto;padding:10px clamp(18px,4vw,40px);
-  display:flex;align-items:center;gap:14px}
-.sig{font-family:var(--mono);font-size:12px;letter-spacing:.18em;color:var(--cy);white-space:nowrap}
-.sig b{color:var(--fg);font-weight:500}
-.bar-nav{display:flex;gap:16px;margin-left:auto;font-family:var(--mono);font-size:11.5px;letter-spacing:.1em}
-.bar-nav a{color:var(--fg-dim);text-decoration:none;transition:color .2s}
-.bar-nav a:hover{color:var(--cy)}
-@media(max-width:860px){.bar-nav{display:none}}
-.btns{display:flex;gap:8px;margin-left:auto}
-@media(min-width:861px){.btns{margin-left:16px}}
-.btn{
-  font-family:var(--mono);font-size:11px;letter-spacing:.12em;
-  background:transparent;color:var(--fg-dim);border:1px solid var(--line-2);
-  padding:6px 10px;border-radius:2px;cursor:pointer;transition:.18s;white-space:nowrap;
-}
-.btn:hover,.btn:focus-visible{color:var(--cy);border-color:var(--cy);box-shadow:var(--glow);outline:none}
-
-/* ============ hero ============ */
-.hero{min-height:100svh;display:flex;flex-direction:column;justify-content:center;padding:100px 0 56px;position:relative}
-.hero-grid{display:grid;grid-template-columns:1fr;gap:34px}
-@media(min-width:1040px){.hero-grid{grid-template-columns:minmax(0,1fr) 264px;gap:48px;align-items:start}}
-.spec{display:none}
-@media(min-width:1040px){
-  .spec{display:block;border:1px solid var(--line);background:var(--panel-2);border-radius:3px;padding:16px 16px 14px;
-    font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;position:relative}
-  .spec::after{content:"";position:absolute;top:-1px;right:-1px;width:12px;height:12px;border:1px solid var(--cy);border-left:0;border-bottom:0}
-}
-.spec .hd{color:var(--cy);letter-spacing:.2em;margin-bottom:12px;display:flex;justify-content:space-between}
-.spec .hd .st{color:var(--fg-faint)}
-.spec dl{margin:0;display:grid;grid-template-columns:62px 1fr;gap:7px 10px}
-.spec dt{color:var(--fg-faint);letter-spacing:.12em}
-.spec dd{margin:0;color:var(--fg-dim);line-height:1.5}
-html[data-lang="zh"] .spec dd{font-family:var(--cjk);letter-spacing:0}
-.spec dd b{color:var(--cy);font-weight:500}
-.spec .bars{margin-top:14px;padding-top:12px;border-top:1px solid var(--line);display:grid;gap:7px}
-.spec .bar{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;color:var(--fg-faint)}
-.spec .trk{grid-column:1/-1;height:3px;background:var(--line);position:relative;overflow:hidden}
-.spec .trk i{position:absolute;inset:0 auto 0 0;background:var(--cy);box-shadow:0 0 8px var(--cy);display:block}
-.eyebrow{font-family:var(--mono);font-size:11.5px;letter-spacing:.24em;color:var(--cy);margin-bottom:22px;
-  display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-.eyebrow::before{content:"";width:28px;height:1px;background:var(--cy);box-shadow:var(--glow)}
-.dot{width:6px;height:6px;border-radius:50%;background:var(--cy);box-shadow:0 0 8px var(--cy);animation:bl 2s ease-in-out infinite}
-@keyframes bl{0%,100%{opacity:1}50%{opacity:.25}}
-h1.name{
-  font-family:var(--sans);font-weight:700;margin:0;line-height:.95;
-  font-size:clamp(3rem,12vw,7.5rem);letter-spacing:-.03em;
-  text-transform:uppercase;position:relative;display:inline-block;
-}
-h1.name .cn{display:block;font-family:var(--cjk);letter-spacing:.06em;font-size:.42em;color:var(--fg-dim);
-  font-weight:500;margin-bottom:.35em;text-transform:none}
-.glitch{position:relative}
-.glitch::before,.glitch::after{content:attr(data-t);position:absolute;inset:0;opacity:0;pointer-events:none}
-.glitch:hover::before{color:var(--cy);transform:translate(-3px,1px);opacity:.75;clip-path:inset(0 0 58% 0)}
-.glitch:hover::after{color:var(--vi);transform:translate(3px,-1px);opacity:.75;clip-path:inset(56% 0 0 0)}
-.tagline{margin:26px 0 0;font-size:clamp(1.05rem,2.4vw,1.5rem);color:var(--fg);max-width:34ch;font-weight:500;line-height:1.45}
-.hook{margin:20px 0 0;max-width:56ch;color:var(--fg-dim);font-size:clamp(.95rem,1.7vw,1.06rem)}
-.hook b{color:var(--cy);font-weight:600}
-.term{
-  margin-top:34px;max-width:640px;border:1px solid var(--line-2);border-radius:3px;
-  background:var(--panel);box-shadow:var(--glow);overflow:hidden;
-}
-.term-top{display:flex;align-items:center;gap:7px;padding:8px 12px;border-bottom:1px solid var(--line);
-  font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;color:var(--fg-faint)}
-.term-top i{width:7px;height:7px;border-radius:50%;background:var(--fg-faint);opacity:.55}
-.term-top i:first-child{background:var(--cy);opacity:.8}
-.term-body{padding:14px 14px 16px;font-family:var(--mono);font-size:clamp(11.5px,2.5vw,13px);line-height:1.9;color:var(--fg-dim);min-height:104px}
-.term-body .p{color:var(--cy)}
-.term-disclaimer{margin-top:11px;padding:9px 10px 0;border-top:1px dashed var(--line-2);font-family:var(--mono);font-size:.8rem;line-height:1.5;color:var(--vi);opacity:1;letter-spacing:.02em}
-html[data-lang="zh"] .term-disclaimer{font-family:var(--cjk);font-size:.82rem}
-.term-body .out{color:var(--fg)}
-.cursor{display:inline-block;width:8px;height:1.05em;background:var(--cy);vertical-align:-2px;animation:bl 1s steps(2) infinite}
-.cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:32px}
-.cta a{
-  font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-decoration:none;
-  padding:11px 18px;border:1px solid var(--line-2);color:var(--fg);border-radius:2px;transition:.2s;
-}
-.cta a.primary{border-color:var(--cy);color:var(--cy)}
-.cta a:hover{background:var(--cy);color:#04070a;border-color:var(--cy);box-shadow:0 0 26px rgba(0,255,240,.3)}
-html[data-theme="light"] .cta a:hover{color:#fff}
-.scroll-hint{position:absolute;bottom:22px;left:0;font-family:var(--mono);font-size:10.5px;letter-spacing:.2em;color:var(--fg-faint)}
-@media(max-width:560px){
-  .eyebrow{font-size:10px;letter-spacing:.1em;margin-bottom:16px}
-  .eyebrow::before{width:18px}
-  .scroll-hint{display:none}
-}
-
-/* ============ sections ============ */
-section{padding:clamp(64px,10vw,110px) 0;position:relative;scroll-margin-top:66px}
-#top{scroll-margin-top:0}
-.sec-head{display:flex;align-items:baseline;gap:14px;margin-bottom:34px;flex-wrap:wrap}
-.sec-idx{font-family:var(--mono);font-size:11px;letter-spacing:.2em;color:var(--cy);opacity:.85}
-h2{font-size:clamp(1.5rem,4.2vw,2.3rem);margin:0;font-weight:600;letter-spacing:-.015em}
-.sec-sub{font-family:var(--mono);font-size:11.5px;color:var(--fg-faint);letter-spacing:.08em}
-.rule{height:1px;background:linear-gradient(90deg,var(--line-2),transparent);margin-bottom:34px}
-
-/* proof / video */
-.proof{display:grid;gap:26px;align-items:center}
-@media(min-width:900px){.proof{grid-template-columns:minmax(0,1fr) auto;gap:44px}}
-.phone{position:relative;justify-self:center;width:min(300px,72vw);
-  border:1px solid var(--line-2);border-radius:28px;padding:9px;background:#04070a;
-  box-shadow:0 0 44px rgba(0,255,240,.13),0 22px 64px rgba(0,0,0,.55)}
-.phone{order:-1}
-@media(min-width:900px){.phone{width:clamp(220px,32vh,300px);order:0}}
-html[data-theme="light"] .phone{background:#0d1416;box-shadow:0 0 30px rgba(0,142,134,.12),0 18px 44px rgba(0,0,0,.22)}
-.phone::before{content:"";position:absolute;top:2px;left:50%;transform:translateX(-50%);
-  width:52px;height:4px;border-radius:3px;background:var(--line-2)}
-.phone video{display:block;width:100%;height:auto;border-radius:21px;background:#000}
-.phone .tagpill{position:absolute;top:-11px;left:50%;transform:translateX(-50%);white-space:nowrap;
-  font-family:var(--mono);font-size:9.5px;letter-spacing:.16em;color:var(--cy);
-  background:var(--bg);border:1px solid var(--line-2);padding:3px 9px;border-radius:2px}
-.proof h3{margin:0 0 10px;font-size:clamp(1.15rem,3vw,1.5rem);font-weight:600;letter-spacing:-.01em;line-height:1.35}
-.proof .lede{color:var(--fg-dim);font-size:.95rem;margin:0 0 16px}
-.proof .lede b{color:var(--fg);font-weight:600}
-.proof .lede .hl{color:var(--cy)}
-.checks{display:grid;gap:8px;margin:0 0 14px;font-size:.89rem}
-.checks div{display:grid;grid-template-columns:16px 1fr;gap:9px;color:var(--fg-dim);align-items:start}
-.checks i{color:var(--cy);font-style:normal;font-family:var(--mono);font-size:11px;padding-top:3px}
-.checks b{color:var(--fg);font-weight:600}
-.fineprint{font-family:var(--mono);font-size:10px;color:var(--fg-faint);line-height:1.7;
-  border-top:1px solid var(--line);padding-top:11px}
-html[data-lang="zh"] .fineprint{font-family:var(--cjk);font-size:11px}
-
-/* numbers */
-.nums{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--line);border:1px solid var(--line)}
-@media(min-width:900px){.nums{grid-template-columns:repeat(5,1fr)}}
-.num{background:var(--bg);padding:20px 18px;transition:background .25s}
-.num:hover{background:var(--bg-2)}
-.num .v{font-family:var(--mono);font-weight:700;font-size:clamp(1.5rem,4.4vw,2.05rem);color:var(--cy);line-height:1.1;letter-spacing:-.02em;text-shadow:0 0 22px rgba(0,255,240,.22)}
-html[data-theme="light"] .num .v{text-shadow:none}
-.num .v small{font-size:.5em;font-weight:500;color:var(--fg-dim);margin-left:3px;letter-spacing:0}
-.num .k{font-family:var(--mono);font-size:10.5px;letter-spacing:.11em;color:var(--fg-faint);margin-top:9px;text-transform:uppercase}
-html[data-lang="zh"] .num .k{font-family:var(--cjk);letter-spacing:.04em;text-transform:none;font-size:11.5px}
-.nums-note{font-family:var(--mono);font-size:11px;color:var(--fg-faint);margin-top:14px}
-
-/* work cards */
-.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:18px}
-.card{
-  position:relative;border:1px solid var(--line);background:var(--panel-2);padding:24px 22px 22px;border-radius:3px;
-  transition:border-color .25s,transform .25s,box-shadow .25s;
-}
-.card::before,.card::after{content:"";position:absolute;width:11px;height:11px;border:1px solid var(--cy);opacity:0;transition:opacity .25s}
-.card::before{top:-1px;left:-1px;border-right:0;border-bottom:0}
-.card::after{bottom:-1px;right:-1px;border-left:0;border-top:0}
-.card:hover{border-color:var(--line-2);transform:translateY(-3px);box-shadow:0 10px 40px rgba(0,0,0,.35)}
-.card:hover::before,.card:hover::after{opacity:1}
-.card.wide{grid-column:1/-1}
-.card-tag{font-family:var(--mono);font-size:10px;letter-spacing:.18em;color:var(--cy);margin-bottom:10px;display:flex;gap:9px;align-items:center;flex-wrap:wrap}
-.card-tag .chip{border:1px solid var(--line-2);padding:2px 7px;border-radius:2px;color:var(--fg-faint);letter-spacing:.1em}
-.card h3{margin:0 0 4px;font-size:1.22rem;font-weight:600;letter-spacing:-.01em}
-.card h3 a{color:inherit;text-decoration:none;border-bottom:1px solid var(--line-2)}
-.card h3 a:hover{color:var(--cy);border-color:var(--cy)}
-.card .lede{color:var(--fg-dim);font-size:.93rem;margin:0 0 16px}
-.pmr{display:grid;gap:11px;margin-top:4px}
-.pmr .row{display:grid;grid-template-columns:62px 1fr;gap:12px;align-items:start}
-html[data-lang="en"] .pmr .row{grid-template-columns:72px 1fr}
-.pmr .lab{font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:var(--fg-faint);padding-top:4px;border-right:1px solid var(--line);padding-right:10px;text-align:right}
-.pmr .row.res .lab{color:var(--cy)}
-.pmr .txt{font-size:.9rem;color:var(--fg);line-height:1.6}
-.pmr .row.res .txt{color:var(--fg)}
-.pmr .txt b{color:var(--cy);font-weight:600}
-.mini{display:flex;flex-wrap:wrap;gap:6px;margin-top:16px}
-.mini span{font-family:var(--mono);font-size:10px;letter-spacing:.06em;color:var(--fg-faint);border:1px solid var(--line);padding:3px 8px;border-radius:2px}
-
-/* tachikoma */
-.tk{border:1px solid var(--line-2);background:var(--panel);border-radius:3px;overflow:hidden;box-shadow:var(--glow)}
-.tk-head{padding:20px 22px 0}
-.tk-title{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
-.tk-title h3{margin:0;font-size:clamp(1.3rem,3.6vw,1.75rem);font-weight:700;letter-spacing:-.01em}
-.tk-title .jp{font-family:var(--mono);font-size:12px;color:var(--vi);letter-spacing:.18em}
-.tk-meta{font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;color:var(--fg-faint);margin-top:8px}
-.tk-body{padding:16px 22px 22px;display:grid;gap:22px;grid-template-columns:1fr}
-@media(min-width:900px){.tk-body{grid-template-columns:1.05fr .95fr;align-items:start}}
-.tk-copy p{margin:0 0 13px;font-size:.93rem;color:var(--fg-dim)}
-.tk-copy p b{color:var(--fg);font-weight:600}
-.tk-copy .claim{font-size:clamp(1.05rem,2.7vw,1.32rem);color:var(--cy);font-weight:600;line-height:1.4;margin-bottom:14px;letter-spacing:-.01em}
-.tk-copy .caveat{font-family:var(--mono);font-size:10.5px;color:var(--fg-faint);line-height:1.7;margin-top:14px;border-top:1px solid var(--line);padding-top:12px}
-html[data-lang="zh"] .tk-copy .caveat{font-family:var(--cjk);font-size:11.5px}
-.split{display:grid;gap:18px;margin-top:18px}
-@media(min-width:560px){.split{grid-template-columns:1fr 1fr;gap:20px}}
-.split .col{border:1px solid var(--line);border-radius:2px;padding:13px 14px 14px;background:var(--panel-2)}
-.split h4{margin:0 0 10px;font-family:var(--mono);font-size:10px;letter-spacing:.16em;font-weight:500}
-.split h4.ok{color:var(--cy)} .split h4.wip{color:var(--vi)}
-html[data-lang="zh"] .split h4{font-family:var(--cjk);font-size:11.5px;letter-spacing:.06em}
-.split .flow{margin:0;gap:8px}
-.split .col:last-child .flow i{color:var(--vi)}
-.tk-copy p .hl{color:var(--cy)}
-.flow{display:grid;gap:7px;margin:16px 0 0;font-family:var(--mono);font-size:11px;letter-spacing:.04em}
-.flow div{display:flex;gap:9px;align-items:flex-start;color:var(--fg-dim)}
-.flow div i{color:var(--cy);font-style:normal}
-html[data-lang="zh"] .flow{font-family:var(--cjk);font-size:12.5px}
-.viz{border:1px solid var(--line);background:#04070a;border-radius:2px;position:relative;overflow:hidden}
-html[data-theme="light"] .viz{background:#f7fafa}
-#swarm{display:block;width:100%;height:270px}
-@media(max-width:520px){#swarm{height:230px}}
-.viz-bar{display:flex;justify-content:space-between;gap:10px;padding:8px 12px;border-top:1px solid var(--line);
-  font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:var(--fg-faint)}
-.viz-bar #phase{color:var(--cy)}
-.viz-cap{font-family:var(--mono);font-size:10.5px;color:var(--fg-faint);margin-top:9px;line-height:1.6}
-
-/* stack */
-.stack{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px}
-.sgrp h4{margin:0 0 11px;font-family:var(--mono);font-size:11px;letter-spacing:.17em;color:var(--cy);font-weight:500}
-.sgrp .items{display:flex;flex-wrap:wrap;gap:6px}
-.sgrp .items span{font-family:var(--mono);font-size:11px;color:var(--fg-dim);border:1px solid var(--line);padding:4px 9px;border-radius:2px;transition:.18s}
-.sgrp .items span:hover{border-color:var(--line-2);color:var(--fg)}
-
-/* timeline */
-.tl{display:grid;gap:0;border-left:1px solid var(--line);margin-left:6px}
-.tl .it{position:relative;padding:0 0 30px 26px}
-.tl .it:last-child{padding-bottom:0}
-.tl .it::before{content:"";position:absolute;left:-5px;top:7px;width:9px;height:9px;border-radius:50%;
-  background:var(--bg);border:1px solid var(--cy)}
-.tl .it.now::before{background:var(--cy);box-shadow:0 0 12px var(--cy)}
-.tl .when{font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;color:var(--cy)}
-.tl .who{font-size:1.02rem;font-weight:600;margin-top:4px}
-.tl .role{font-size:.85rem;color:var(--fg-dim);margin-top:1px}
-.tl .what{font-size:.88rem;color:var(--fg-dim);margin-top:8px;max-width:72ch}
-
-/* contact */
-.contact{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
-.ct{border:1px solid var(--line);padding:20px;border-radius:3px;text-decoration:none;color:inherit;
-  display:block;transition:.22s;background:var(--panel-2)}
-.ct:hover{border-color:var(--cy);box-shadow:var(--glow);transform:translateY(-2px)}
-.ct .k{font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:var(--fg-faint)}
-.ct .v{font-family:var(--mono);font-size:clamp(.85rem,2.6vw,1rem);color:var(--cy);margin-top:8px;word-break:break-all}
-footer{border-top:1px solid var(--line);padding:26px 0 40px;font-family:var(--mono);font-size:10.5px;
-  letter-spacing:.1em;color:var(--fg-faint);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
-
-/* reveal */
-.rv{opacity:0;transform:translateY(16px);transition:opacity .6s cubic-bezier(.2,.7,.3,1),transform .6s cubic-bezier(.2,.7,.3,1)}
-.rv.in{opacity:1;transform:none}
-@media (prefers-reduced-motion:reduce){
-  html{scroll-behavior:auto}
-  .rv{opacity:1;transform:none;transition:none}
-  .noise{animation:none;opacity:0}
-  .dot,.cursor{animation:none}
-  .bg-scan{opacity:.18}
-  *{transition-duration:.01ms!important}
+figcaption{color:var(--dim); font-size:14px; line-height:1.65}
+.note{font-size:14px; color:var(--dim); margin-top:10px}
+footer{padding-top:28px; border-top:1px solid var(--line); color:var(--dim); font-size:15px}
+footer a{margin-right:18px}
+hr{border:0; border-top:1px solid var(--line); margin:0 0 56px}
+@media (max-width:520px){
+  .wrap{padding:64px 0 88px}
+  body{font-size:16.5px}
 }
 </style>
 </head>
 <body>
-<div class="bg-grid"></div><div class="bg-vig"></div><div class="noise"></div><div class="bg-scan"></div>
+<div class="wrap">
 
-<header class="bar">
-  <div class="bar-in">
-    <div class="sig">LU YIXIN <b>/ LOUIE</b></div>
-    <nav class="bar-nav">
-      <a href="#proof"><span class="zh">实拍</span><span class="en">PROOF</span></a>
-      <a href="#numbers"><span class="zh">数据</span><span class="en">NUMBERS</span></a>
-      <a href="#work"><span class="zh">作品</span><span class="en">WORK</span></a>
-      <a href="#tachikoma">TACHIKOMA</a>
-      <a href="#stack"><span class="zh">技术栈</span><span class="en">STACK</span></a>
-      <a href="#timeline"><span class="zh">履历</span><span class="en">TIMELINE</span></a>
-      <a href="#contact"><span class="zh">联系</span><span class="en">CONTACT</span></a>
-    </nav>
-    <div class="btns">
-      <button class="btn" id="lang" aria-label="Switch language">EN</button>
-      <button class="btn" id="theme" aria-label="Switch theme">◐</button>
-    </div>
-  </div>
-</header>
+  <header>
+    <h1>Louie</h1>
+    <p class="sub">后端 / 全栈工程师。这两年在做 Agent 系统。</p>
+  </header>
 
-<main class="wrap">
+  <section>
+    <p class="lead">我关心的是同一件事的不同侧面：一个 Agent 说它做完了，凭什么信它？</p>
+    <p>所以我做的东西大多长这样——把任务派出去、让它跨进程活下来、干完能把结果送回来，然后由另一个模型回到数据库或页面里独立查一遍。这套东西我每天在用，也用它做过合规筛查、开户、发卡和对账这类不能出错的活。</p>
+  </section>
 
-<!-- ===================== HERO ===================== -->
-<section class="hero" id="top">
-  <div class="eyebrow">
-    <span class="dot"></span>
-    <span class="zh">SECTION 9 · 多 Agent 协作 · EVOTAVERN 深圳 2026</span>
-    <span class="en">SECTION 9 · MULTI-AGENT · EVOTAVERN SHENZHEN 2026</span>
-  </div>
+  <section>
+    <h2>正在做</h2>
+    <p class="t">TACHIKOMA<span class="meta">EvoTavern 深圳 · 9 月</span></p>
+    <p class="d">几个 Agent 各自干完一件事之后，哪些发现值得进入下一轮的共享记忆？我想让每条经验都带着来源接受验证，有冲突先挂起而不是投票，写进去的还能撤回；最后用同一个任务跑对照，看下一轮的行为有没有真的改变。<br><br>调度、独立复核和语音入口是我现成的；<strong>记忆合并这套机制现在还不存在，是现场要做的部分。</strong></p>
+  </section>
 
-  <div class="hero-grid">
-  <div>
-  <h1 class="name">
-    <span class="cn">卢一鑫</span>
-    <span class="glitch" data-t="LOUIE">LOUIE</span>
-  </h1>
+  <section>
+    <h2>作品</h2>
+    <ul>
+      <li>
+        <p class="t"><a href="https://github.com/yixin-1024/feishu-claude-code">cc-lark</a><span class="meta">开源 · Python</span></p>
+        <p class="d">把 IM 群聊当成 Agent 的工作台。一条需求可以派出多个独立子任务并行跑，主会话这一轮结束了它们还活着，完工自动把结果贴回原话题。也支持让不同厂商的模型互相复核——一个实现，另一个回到真实环境查证。</p>
+      </li>
+      <li>
+        <p class="t">CarVoice</p>
+        <p class="d">用手机系统自带的拨号器打给 Agent。拨号进去就是原生通话界面，用说的派任务；跑完了结果会在通话中插播，先挂断的话，下次来电补报。Android 原生音频链路自己写的，双工、打断、重采样都在里面。</p>
+      </li>
+      <li>
+        <p class="t">合规与支付场景的自动化<span class="meta">工作项目</span></p>
+        <p class="d">在一家持牌跨境支付平台，把原本跨部门人工周转的流程做成了群里一句话触发的自执行流水线：反洗钱筛查、多币种账户开立、虚拟卡发行、账目双向对账。另外做过聊天记账与多币种复式账本。</p>
+      </li>
+      <li>
+        <p class="t">更早</p>
+        <p class="d">嵌入式（Wi-Fi 6 芯片协议栈、固件与系统级测试）、企业级 IM 的微服务链路、几个 Web3 产品（预测市场的撮合与做市、双链社交应用、一个稳定币协议）。</p>
+      </li>
+    </ul>
+  </section>
 
-  <p class="tagline">
-    <span class="zh">全栈工程师 · 系统架构 · 把多 Agent 协作做成日常在用的工程系统</span>
-    <span class="en">Full-stack engineer · systems architect · turning multi-agent collaboration into systems I actually use daily</span>
-  </p>
-
-  <p class="hook">
-    <span class="zh">近 30 天约 <b>140 亿 token</b>（按 API 等值口径统计），单日峰值 17 亿。我做的事：让一群异构 Agent 在 IM 群里<b>并行干活、互相复核</b>，再把结果交出来。</span>
-    <span class="en">≈<b>14B tokens</b> over the last 30 days (API-equivalent accounting), peaking at 1.7B in one day. What I build: heterogeneous agents that <b>work in parallel and re-verify each other</b> inside a group chat, then hand over the result.</span>
-  </p>
-
-  <div class="term" aria-hidden="true">
-    <div class="term-top"><i></i><i></i><i></i>&nbsp;louie@ghost — tachikoma —  80×24</div>
-    <div class="term-body">
-      <div><span class="p">$</span> <span id="tw"></span><span class="cursor"></span></div>
-      <div id="twout" class="out"></div>
-      <div class="term-disclaimer"><span class="zh">// 交互示意，非实时系统输出</span><span class="en">// illustrative replay, not a live system feed</span></div>
-    </div>
-  </div>
-
-  <div class="cta">
-    <a class="primary" href="#proof"><span class="zh">▸ 看 51 秒实拍</span><span class="en">▸ WATCH THE 51s PROOF</span></a>
-    <a href="https://github.com/yixin-1024" target="_blank" rel="noopener">▸ GITHUB</a>
-    <a href="#tachikoma"><span class="zh">▸ 正在做的：塔奇克马</span><span class="en">▸ NOW BUILDING: TACHIKOMA</span></a>
-  </div>
-
-  </div>
-
-  <aside class="spec" aria-hidden="true">
-    <div class="hd"><span>SPEC SHEET</span><span class="st">v2026.09</span></div>
-    <dl>
-      <dt>ID</dt><dd>卢一鑫 / LOUIE · <b>yixin-1024</b></dd>
-      <dt>ROLE</dt><dd><span class="zh">技术负责人 · 全栈 · Agent 工程</span><span class="en">Tech lead · full-stack · agent engineering</span></dd>
-      <dt>BASE</dt><dd><span class="zh">广东湛江 · 远程 / 可赴深圳</span><span class="en">Zhanjiang, CN · remote / on-site SZ</span></dd>
-      <dt>EDU</dt><dd><span class="zh">华中科技大学 · 软件工程</span><span class="en">HUST · Software Engineering</span></dd>
-      <dt>TRACK</dt><dd><b>SECTION 9</b> · GHOST NETWORK</dd>
-      <dt>FLEET</dt><dd><span class="zh">6 后端 · 8 机器人 · 30+ Skill</span><span class="en">6 backends · 8 bots · 30+ skills</span></dd>
-      <dt>CLAIM</dt><dd><span class="zh"><b>共享记忆，不必共享同一个判断</b></span><span class="en"><b>Share the memory, not the verdict</b></span></dd>
-    </dl>
-    <div class="bars">
-      <div class="bar"><span>AGENT ORCHESTRATION</span><span>30+</span></div><div class="trk"><i style="width:100%"></i></div>
-      <div class="bar"><span>VOICE / EMBODIED</span><span>1.6s</span></div><div class="trk"><i style="width:88%"></i></div>
-      <div class="bar"><span>FINTECH COMPLIANCE</span><span>KYC/KYB</span></div><div class="trk"><i style="width:94%"></i></div>
-    </div>
-  </aside>
-  </div>
-
-  <div class="scroll-hint">SCROLL ↓</div>
-</section>
-
-<!-- ===================== PROOF ===================== -->
-<section id="proof">
-  <div class="sec-head rv">
-    <span class="sec-idx">// 01</span>
-    <h2><span class="zh">实拍证据</span><span class="en">PROOF</span></h2>
-    <span class="sec-sub"><span class="zh">51 秒手机实拍，不是效果图</span><span class="en">51 seconds, filmed off a real handset — not a mockup</span></span>
-  </div>
-  <div class="rule"></div>
-
-  <div class="proof rv">
-    <div>
-      <h3>
-        <span class="zh">拨号盘输入 <span style="color:var(--cy)">8888</span>，在系统原生通话界面里接你电话的是 Agent</span>
-        <span class="en">Dial <span style="color:var(--cy)">8888</span> — the thing answering inside the system's own call UI is an agent</span>
-      </h3>
-      <p class="lede">
-        <span class="zh">用手机自带的拨号盘拨 8888，进入的是 <b>系统原生通话界面</b>（<code style="font-family:var(--mono);font-size:.85em;color:var(--cy)">com.android.dialer</code>，不是 App 自己画的），<span class="hl">这台手机连 SIM 卡都没插</span>。全程只用嘴说话：问它现在有几个定时任务，它答「目前只有一个定时任务在运行」，并说明自己能调度各种助手去写代码、排查问题、设提醒和定时任务。</span>
-        <span class="en">Dialling 8888 from the phone's own dialler opens the <b>system-native in-call screen</b> (<code style="font-family:var(--mono);font-size:.85em;color:var(--cy)">com.android.dialer</code>, not a screen the app drew), and <span class="hl">this handset has no SIM card in it</span>. Everything after that is voice: asked how many scheduled jobs are running, it answers that exactly one is, and explains it can dispatch assistants to write code, debug problems, and set reminders and scheduled tasks.</span>
-      </p>
-      <div class="checks">
-        <div><i>▸</i><span><span class="zh"><b>系统原生通话界面</b>，由 Telecom <code style="font-family:var(--mono);font-size:.85em">CALL_PROVIDER</code> 拿到，不需要特权</span><span class="en"><b>System-native call UI</b>, obtained via Telecom <code style="font-family:var(--mono);font-size:.85em">CALL_PROVIDER</code> — no privileged permissions</span></span></div>
-        <div><i>▸</i><span><span class="zh"><b>无 SIM 卡</b>也能拨通，车机外放与蓝牙天然承接</span><span class="en">Works <b>with no SIM</b>; car speakers and Bluetooth are inherited for free</span></span></div>
-        <div><i>▸</i><span><span class="zh"><b>全双工语音</b>，说完即答（现有链路实测首响 1.6–1.7s、打断体感 330ms 内）</span><span class="en"><b>Full-duplex voice</b>, answers as you finish (measured on the current link: 1.6–1.7s to first response, barge-in under 330ms)</span></span></div>
-        <div><i>▸</i><span><span class="zh">电话里派一个后台任务，它<b>在通话中把结果插播</b>给你；挂断了，<b>下次来电也会补报</b>　<span style="color:var(--fg-faint)">（由它主动呼出回拨尚未实现）</span></span><span class="en">Dispatch a background task by phone and it <b>interjects the result mid-call</b>; hang up, and <b>the next call replays it</b>　<span style="color:var(--fg-faint)">(having it dial out to you is not built yet)</span></span></span></div>
-      </div>
-      <div class="fineprint">
-        <span class="zh">// 手机实拍录屏，字幕为后期标注。画面中的状态栏 / 通知区与通话记录区已做模糊处理。<a href="media/car-ai-call-demo.mp4" style="color:var(--cy);text-decoration:none;border-bottom:1px solid var(--line-2)">下载这段视频 ↗</a></span>
-        <span class="en">// Screen recording from the handset; subtitles added afterwards. The status bar, notification area and call log in frame have been blurred. <a href="media/car-ai-call-demo.mp4" style="color:var(--cy);text-decoration:none;border-bottom:1px solid var(--line-2)">Download the clip ↗</a></span>
-      </div>
-    </div>
-
-    <div class="phone">
-      <span class="tagpill">LIVE CAPTURE · 51s · <span class="zh">无音轨</span><span class="en">no audio</span></span>
-      <video muted playsinline loop controls preload="metadata"
-             poster="media/car-ai-call-demo-poster.jpg"
-             aria-label="Demo: dialling 8888 from the system dialler and talking to an agent in the native call UI">
-        <source src="media/car-ai-call-demo.mp4" type="video/mp4">
-        <span class="zh">你的浏览器不支持内嵌视频，可以 <a href="media/car-ai-call-demo.mp4">直接下载这段 51 秒实拍</a>。</span>
-        <span class="en">Your browser can't play embedded video — <a href="media/car-ai-call-demo.mp4">download the 51-second clip</a> instead.</span>
+  <section>
+    <h2>Demo</h2>
+    <figure>
+      <video muted playsinline loop controls preload="metadata" poster="media/poster.jpg"
+             aria-label="从系统拨号器拨号，在原生通话界面里与 Agent 对话">
+        <source src="media/call.mp4" type="video/mp4">
+        <a href="media/call.mp4">下载这段 51 秒录屏</a>
       </video>
-    </div>
-  </div>
-</section>
+      <figcaption>手机原生拨号器拨 8888，系统通话界面里接电话的是 Agent。<br>实拍录屏，无音轨，自带字幕。</figcaption>
+    </figure>
+  </section>
 
-<!-- ===================== NUMBERS ===================== -->
-<section id="numbers">
-  <div class="sec-head rv">
-    <span class="sec-idx">// 02</span>
-    <h2><span class="zh">硬数据</span><span class="en">HARD NUMBERS</span></h2>
-    <span class="sec-sub"><span class="zh">每个数字都在下方标了来源</span><span class="en">every figure carries its source, below</span></span>
-  </div>
-  <div class="rule"></div>
-  <div class="nums rv">
-    <div class="num"><div class="v" data-n="140" data-suf="亿" data-n-en="14" data-suf-en="B">0</div><div class="k"><span class="zh">token / 30 天 · API 等值</span><span class="en">tokens / 30 days · API-equiv</span></div></div>
-    <div class="num"><div class="v" data-n="17" data-suf="亿" data-n-en="1.7" data-dec-en="1" data-suf-en="B">0</div><div class="k"><span class="zh">单日峰值 token</span><span class="en">single-day peak</span></div></div>
-    <div class="num"><div class="v" data-n="7" data-suf="路" data-suf-en="">0</div><div class="k"><span class="zh">并行子会话舰队 fan-out</span><span class="en">parallel sub-agent fan-out</span></div></div>
-    <div class="num"><div class="v" data-n="6" data-suf="种" data-suf-en="">0</div><div class="k"><span class="zh">已接入 Agent 后端</span><span class="en">agent backends wired in</span></div></div>
-    <div class="num"><div class="v" data-n="8" data-suf="个" data-suf-en="">0</div><div class="k"><span class="zh">同群协作机器人</span><span class="en">bots co-working in one group</span></div></div>
-    <div class="num"><div class="v" data-n="30" data-suf="+">0</div><div class="k"><span class="zh">生产级业务 Skill</span><span class="en">production business skills</span></div></div>
-    <div class="num"><div class="v" data-n="1.6" data-suf="s" data-dec="1">0</div><div class="k"><span class="zh">语音端到端首响 · 现有链路实测</span><span class="en">voice first-token latency · measured, current link</span></div></div>
-    <div class="num"><div class="v" data-n="330" data-suf="ms">0</div><div class="k"><span class="zh">语音打断体感延迟 · 单机实测</span><span class="en">barge-in perceived latency · one handset</span></div></div>
-    <div class="num"><div class="v" data-pre="$" data-n="650" data-suf="万" data-n-en="6.5" data-dec-en="1" data-suf-en="M">0</div><div class="k"><span class="zh">Sigma Money 协议 TVL 历史峰值</span><span class="en">Sigma Money protocol peak TVL</span></div></div>
-    <div class="num"><div class="v" data-n="39" data-suf="GB">0</div><div class="k"><span class="zh">相册增量同步已跑完 / 8652 文件</span><span class="en">photos incrementally synced / 8,652 files</span></div></div>
-  </div>
-  <div class="nums-note">
-    <span class="zh">// 来源　token 用量 = 近 30 天 API 等值口径统计（≈$1.97 万，峰值日 $3,175）　·　语音延迟 = 2026-09 现有链路实测，取自服务日志　·　舰队 / 后端 / Skill 数 = cc-lark 当前配置（后端按组合口径计，opencode+Gemini 记为一个接入）　·　TVL = Sigma Money 协议历史峰值，非个人收入　·　相册同步 = 已全量跑完的累计量</span>
-    <span class="en">// sources　token usage = API-equivalent accounting over the last 30 days (≈$19.7k, peak day $3,175)　·　voice latency = measured on the current link, Sept 2026, from service logs　·　fleet / backend / skill counts = cc-lark's present configuration (backends counted as integrations; opencode+Gemini counts as one)　·　TVL = Sigma Money protocol all-time peak, not personal revenue　·　photo sync = cumulative total already completed</span>
-  </div>
-</section>
+  <footer>
+    <a href="https://github.com/yixin-1024">GitHub</a>
+    <a href="https://github.com/yixin-1024/feishu-claude-code">cc-lark</a>
+  </footer>
 
-<!-- ===================== WORK ===================== -->
-<section id="work">
-  <div class="sec-head rv">
-    <span class="sec-idx">// 03</span>
-    <h2><span class="zh">作品</span><span class="en">WORK</span></h2>
-    <span class="sec-sub"><span class="zh">痛点 → 做法 → 结果</span><span class="en">pain → approach → result</span></span>
-  </div>
-  <div class="rule"></div>
-
-  <div class="cards">
-
-    <!-- cc-lark -->
-    <article class="card wide rv">
-      <div class="card-tag">◆ FLAGSHIP / OPEN SOURCE<span class="chip">PYTHON</span><span class="chip">MULTI-AGENT</span><span class="chip">IN PRODUCTION</span></div>
-      <h3><a href="https://github.com/yixin-1024/feishu-claude-code" target="_blank" rel="noopener">cc-lark · feishu-claude-code ↗</a></h3>
-      <p class="lede"><span class="zh">以 IM 群聊为总线的多 Agent 舰队平台。</span><span class="en">A multi-agent fleet platform that uses an IM group chat as its bus.</span></p>
-      <div class="pmr">
-        <div class="row"><div class="lab">PAIN</div><div class="txt">
-          <span class="zh">我的执行环境是「每轮启动、轮末结束」：一条命令跑完，进程就没了。要让耗时任务继续跑、让多个 Agent 同时干活、并把结果送回原来那条对话里，得先自己把这层运行时补上。</span>
-          <span class="en">My execution environment spawns a process per turn and kills it when the turn ends. To keep long-running tasks alive, let several agents work at once, and deliver results back into the conversation they came from, I had to build that runtime layer myself.</span>
-        </div></div>
-        <div class="row"><div class="lab">BUILD</div><div class="txt">
-          <span class="zh"><b>① 舰队并行编排</b>：一条需求 fan-out ≤7 个独立子会话，托管在常驻进程名下、<b>跨轮存活</b>，完工自动回贴并唤醒主 Agent 聚合。<br>
-          <b>② 跨模型异构会签</b>：Claude、GPT 等异构 Agent 各作为独立机器人进同一个群，一方实现、另一方回到 ground truth（链上解码、查库对账、无头浏览器真跑 UI）独立复核，<b>双签才算交付</b>。<br>
-          <b>③ 运行时 MCP 打破单轮生命周期</b>：自研 MCP Server 给「每轮 spawn、轮末即杀」的 Agent 注入 wake_me_in / dispatch_task / handover / schedule_cron 等 <b>13 个运行时工具</b>；任务状态落盘，进程重启或崩溃后自动续跑。</span>
-          <span class="en"><b>① Fleet orchestration</b> — one request fans out to ≤7 independent sub-sessions, hosted under a resident process so they <b>survive past the turn</b>; each reports back and wakes the main agent to aggregate.<br>
-          <b>② Heterogeneous cross-model co-sign</b> — Claude, GPT and other heterogeneous agents each join the same group as separate bots. One implements, another independently re-verifies against ground truth (on-chain decoding, DB reconciliation, real headless-browser UI runs). <b>No delivery without two signatures.</b><br>
-          <b>③ A runtime MCP that breaks the single-turn lifecycle</b> — a self-built MCP server injects <b>13 runtime tools</b> (wake_me_in, dispatch_task, handover, schedule_cron…) into agents that are spawned and killed every turn. Task state is persisted, so work resumes after a restart or a crash.</span>
-        </div></div>
-        <div class="row res"><div class="lab">RESULT</div><div class="txt">
-          <span class="zh"><b>6 种 Agent 后端（组合口径）、8 个机器人</b>同群协作，用于日常开发、排障与业务运维；已抽象出 Org → Employee → Agent 三层 + Docker 一人一沙箱的多租户形态。<b>这个网站也是它派出去的一个子会话做的。</b></span>
-          <span class="en"><b>6 agent backends (counted as integrations), 8 bots</b> in one group, used for day-to-day development, debugging and business ops. Already abstracted into an Org → Employee → Agent tenancy model with one Docker sandbox per person. <b>This very site was built by one of its dispatched sub-sessions.</b></span>
-        </div></div>
-      </div>
-      <div class="mini"><span>Fleet fan-out ≤7</span><span>Dual-Bot Cosign</span><span>Runtime MCP ×13</span><span>Crash-resume</span><span>Lark / 飞书 / Telegram</span><span>Multi-tenant SaaS</span></div>
-    </article>
-
-    <!-- CarVoice -->
-    <article class="card rv">
-      <div class="card-tag">◆ EMBODIED / VOICE<span class="chip">ANDROID</span><span class="chip">GEMINI LIVE</span><a class="chip" href="#proof" style="color:var(--cy);border-color:var(--line-2);text-decoration:none">▸ <span class="zh">看实拍</span><span class="en">WATCH THE PROOF</span></a></div>
-      <h3>CarVoice · CCVoice</h3>
-      <p class="lede"><span class="zh">拿起手机拨个号，就能指挥一支 Agent 蜂群。</span><span class="en">Pick up a phone, dial a number, command an agent swarm.</span></p>
-      <div class="pmr">
-        <div class="row"><div class="lab">PAIN</div><div class="txt">
-          <span class="zh">人在路上、在开车时，触屏交互等于失能——而这恰恰是最该调用 Agent 的时刻。</span>
-          <span class="en">On the road or behind the wheel, a touchscreen is a disability — exactly when you most need an agent.</span>
-        </div></div>
-        <div class="row"><div class="lab">BUILD</div><div class="txt">
-          <span class="zh">Android 纯原生 Java、零 UI 框架，用 Telecom <b>CALL_PROVIDER</b> 拿到<b>系统原生通话界面</b>（免特权、无 SIM 也能拨，车机外放与蓝牙天然承接）；自研 VoiceLink 做双工音频推拉流、自适应 VAD 与毫秒级打断；自研抗混叠流式重采样（8k/16k/24k/48k 互转）；上行经 Cloudflare Access + HMAC-SHA256 双层鉴权直连 Gemini 3.8 Live 全双工。</span>
-          <span class="en">Pure native Android Java, zero UI frameworks. Telecom <b>CALL_PROVIDER</b> yields the <b>system-native call UI</b> (no privileged perms, dials without a SIM, inherits car speaker and Bluetooth for free). Self-built VoiceLink handles duplex audio push/pull, adaptive VAD and millisecond barge-in; a custom anti-aliasing streaming resampler converts 8k/16k/24k/48k; the uplink goes through Cloudflare Access + HMAC-SHA256 dual-layer auth straight into Gemini 3.8 Live full-duplex.</span>
-        </div></div>
-        <div class="row"><div class="lab">DETAIL</div><div class="txt">
-          <span class="zh">实测发现外放漏进麦克风的 <b>-30dB 级</b>极微弱回声就足以让模型在 300–600ms 内被误打断 → 改用 Manual VAD + 客户端物理静音切分，该场景下不再误触发；再用 backlog 探针治模型 4 倍速推流造成的播放积压。</span>
-          <span class="en">Measurement showed that echo leaking from the speaker at just <b>-30dB</b> was enough to falsely interrupt the model within 300–600ms → switched to manual VAD plus client-side physical mute segmentation, after which that scenario stopped triggering false barge-in. A backlog probe then fixed playback pile-up caused by the model streaming at 4× realtime.</span>
-        </div></div>
-        <div class="row res"><div class="lab">RESULT</div><div class="txt">
-          <span class="zh">现有链路实测：端到端首响 <b>1.6–1.7s</b>、打断体感 <b>330ms</b> 内、工具调用往返 <b>31–44ms</b>（2026-09，取自服务日志）；双机（nubia / 一加）实机跑通。最得意的一点：<b>异步任务插播</b>——电话里派出去的耗时任务由常驻进程执行，完工事件在模型讲话的间隙注入实时对话；挂断后下次来电补报未读回执。<br><span style="color:var(--fg-faint)">（<b style="color:var(--vi)">由它主动回拨给你</b>目前尚未实现，是赛期的探索项，不作为演示成立的前提。）</span></span>
-          <span class="en">Measured on the current link: end-to-end first response <b>1.6–1.7s</b>, barge-in perceived under <b>330ms</b>, tool round-trips <b>31–44ms</b> (Sept 2026, from service logs); verified on two physical handsets (nubia / OnePlus). The part I like most: <b>async task interjection</b> — long tasks dispatched by voice run on the resident process, and completion events are injected into the live conversation in the gaps between the model's sentences; hang up, and the next call replays the receipts you missed.<br><span style="color:var(--fg-faint)">(Having it <b style="color:var(--vi)">place the outbound call back to you</b> is not built yet — an exploration item for the hackathon, not a premise any demo depends on.)</span></span>
-        </div></div>
-      </div>
-      <div class="mini"><span>Telecom CALL_PROVIDER</span><span>Duplex VoiceLink</span><span>Anti-alias resampler</span><span>Cloudflare Access</span><span>HMAC-SHA256</span></div>
-    </article>
-
-    <!-- compliance -->
-    <article class="card rv">
-      <div class="card-tag">◆ VERTICAL AGENT / FINTECH<span class="chip">AML · KYC · KYB</span><span class="chip">PAYMENTS</span></div>
-      <h3><span class="zh">金融合规 &amp; 跨境支付的全流程 Agent 化</span><span class="en">Compliance &amp; cross-border payments, fully agentised</span></h3>
-      <p class="lede"><span class="zh">在新加坡合规科技 Regtank / 加拿大 FINTRAC 持牌支付平台 SPXpay 任技术负责人。</span><span class="en">Tech lead at Regtank (Singapore regtech) and SPXpay (Canadian FINTRAC-licensed MSB).</span></p>
-      <div class="pmr">
-        <div class="row"><div class="lab">PAIN</div><div class="txt">
-          <span class="zh">开户、发卡、合规复核、费率配置，原本每一步都要跨部门人工周转，慢且容易出错，而这是个错不起的行业。</span>
-          <span class="en">Onboarding, card issuing, compliance review, rate configuration — every step used to bounce between departments by hand. Slow and error-prone, in an industry where errors are expensive.</span>
-        </div></div>
-        <div class="row"><div class="lab">BUILD</div><div class="txt">
-          <span class="zh">把这些流程重构成 IM 群里一句话触发的自执行 Agent 流水线，自研 <b>30+ 生产级 Skill</b>：<br>
-          <b>合规</b> — KYC/KYB 自动筛查（Acuris 通道）、PEP / 制裁 / 不利媒体命中分桶、风险评分与排除决策矩阵、自动产出合规报告；活体认证端到端自动化回归。<br>
-          <b>开户</b> — USD/HKD 多币种虚拟账户一键开立、批量开户流水线（扫 KYC 通过用户 → 地址翻译规整 → 串行开卡 → 开 VA → 汇总文档）、账户确认函自动渲染 PDF 回传客户群。<br>
-          <b>发卡</b> — 对接持牌通道，企业 VISA 虚拟卡秒级发行。<br>
-          <b>对账</b> — 发卡侧流水与本地账目双向核对、主资金池 vs 全卡余额差额审计、销卡残值异常扫描。<br>
-          <b>运维</b> — staging/prod 配置比对热部署、工单智能代答、Figma vs 线上 UI 还原度数值化比对修复闭环。</span>
-          <span class="en">Rebuilt every one of them as a self-executing agent pipeline triggered by a single sentence in a group chat, on <b>30+ production-grade skills</b>:<br>
-          <b>Compliance</b> — automated KYC/KYB screening (Acuris), PEP / sanctions / adverse-media hit bucketing, risk scoring and an exclusion decision matrix, auto-generated compliance reports; end-to-end automated liveness regression.<br>
-          <b>Onboarding</b> — one-click USD/HKD multi-currency virtual bank accounts, a batch pipeline (scan KYC-passed users → normalise and translate addresses → issue cards serially → open VAs → summary doc), and account confirmation letters auto-rendered to PDF and returned to the client group.<br>
-          <b>Issuing</b> — corporate VISA virtual cards issued in seconds via a licensed channel.<br>
-          <b>Reconciliation</b> — two-way matching of issuer-side flows against local ledgers, main-pool vs all-card balance delta audits, residual-value scans on cancelled cards.<br>
-          <b>Ops</b> — staging/prod config diff and hot deploy, AI ticket replies, and a numeric Figma-vs-live UI fidelity diff-and-fix loop.</span>
-        </div></div>
-        <div class="row res"><div class="lab">RESULT</div><div class="txt">
-          <span class="zh">这些流程现在都是群里一句话触发：<b>30+ 生产 Skill</b> 覆盖筛查、开户、发卡与对账，合规报告与账户确认函自动成文回传。更重要的是：我对「Agent 进真实高风险行业」的边界、审计与可信度问题，有踩过坑的认知，而不是只有热情。</span>
-          <span class="en">All of these now start with one sentence in a group chat: <b>30+ production skills</b> covering screening, onboarding, issuing and reconciliation, with compliance reports and account confirmation letters written and returned automatically. More importantly: my view on where agents may and may not go in a high-stakes regulated industry — auditability, boundaries, trust — comes from scars, not enthusiasm.</span>
-        </div></div>
-        <div class="row"><div class="lab">ALSO</div><div class="txt">
-          <span class="zh"><b>另外三块独立实现</b>——与上面那条支付流水线<b>各自独立</b>，不是同一套系统，也没有打通：<br>
-          · <b>聊天记账助手</b>：把聊天流里零散的订单信息变成结构化记录，做去重、人工优先填空、写后回读校验<br>
-          · <b>多币种复式账本</b>：Decimal 精度、借贷平衡校验、确定性锁序<br>
-          · <b>链上风控（KYT）</b>：CLI → API → 风险数据服务的查询与订阅管理；<span style="color:var(--fg-faint)">风险数据由第三方合规数据源提供，不是自建风险库</span><br>
-          <span style="color:var(--fg-faint)">以上均为参与 / 主导实现。</span></span>
-          <span class="en"><b>Three further implementations</b>, each <b>standing on its own</b> — separate systems from the payments pipeline above, not wired together:<br>
-          · <b>Chat bookkeeping assistant</b>: turns scattered order details in a chat stream into structured records — deduplication, human-first gap filling, read-back verification after write<br>
-          · <b>Multi-currency double-entry ledger</b>: decimal precision, debit/credit balance checks, deterministic lock ordering<br>
-          · <b>On-chain risk screening (KYT)</b>: query and subscription management across CLI → API → risk data service; <span style="color:var(--fg-faint)">the risk data comes from a third-party compliance data source, not a risk database of my own</span><br>
-          <span style="color:var(--fg-faint)">Built or led the implementation of each.</span></span>
-        </div></div>
-      </div>
-      <div class="mini"><span>Acuris screening</span><span>VISA issuing</span><span>SGB multi-currency VA</span><span>Reconciliation audit</span><span>Liveness E2E</span><span>30+ skills</span><span>Chat bookkeeping</span><span>Double-entry ledger</span><span>KYT screening</span></div>
-    </article>
-
-    <!-- wowapi -->
-    <article class="card rv">
-      <div class="card-tag">◆ INFRA / LLM GATEWAY<span class="chip">wowapi.ai</span></div>
-      <h3><span class="zh">wowapi.ai — 多模型网关与供应商质量评测</span><span class="en">wowapi.ai — multi-model gateway &amp; supplier quality evaluation</span></h3>
-      <div class="pmr">
-        <div class="row"><div class="lab">PAIN</div><div class="txt">
-          <span class="zh">走中转与聚合链路时，上游到底是哪个模型、怎么路由的，买家基本无从验证——只能听供应商自述。</span>
-          <span class="en">When you buy through a relay or aggregator, you have almost no way to verify which model is actually serving you or how the request is routed — you're taking the supplier's word for it.</span>
-        </div></div>
-        <div class="row"><div class="lab">BUILD</div><div class="txt">
-          <span class="zh">自建高并发多模型聚合网关，并围绕协议兼容性、SSE 流式行为、长上下文表现、响应特征与 token 计量设计了一套<b>可重复的评测</b>；结合日志与工具输出，发现供应商的<b>行为差异与路由异常线索</b>。<sub>这些信号是线索，单独不能证明模型身份或完整上游路由。</sub></span>
-          <span class="en">Built a high-concurrency multi-model aggregation gateway, plus <b>repeatable evaluations</b> for protocol compatibility, SSE streaming behaviour, long-context performance, response characteristics and token accounting; logs and tool outputs surface <b>provider inconsistencies and routing anomalies</b>. <sub>These are diagnostic clues — alone they cannot establish model identity or the complete upstream route.</sub></span>
-        </div></div>
-        <div class="row res"><div class="lab">RESULT</div><div class="txt">
-          <span class="zh">在生产流量上持续运行，能拿到供应商真伪与路由链路的<b>异常线索与一致性评测结果</b>，而不是只听对方自述。</span>
-          <span class="en">Running on production traffic; it yields <b>anomaly signals and consistency measurements</b> on a supplier's authenticity and routing path, rather than taking their word for it.</span>
-        </div></div>
-      </div>
-      <div class="mini"><span>SSE frame slicing</span><span>Token accounting</span><span>TLS / header forensics</span><span>Long-context decay</span></div>
-    </article>
-
-    <!-- web3 -->
-    <article class="card rv">
-      <div class="card-tag">◆ WEB3 / FULL-STACK<span class="chip">Go</span><span class="chip">Solidity</span><span class="chip">Flutter</span></div>
-      <h3>SeeSaw · bitx · Sigma Money</h3>
-      <div class="pmr">
-        <div class="row"><div class="lab">SeeSaw</div><div class="txt">
-          <span class="zh">预测市场（seesaw.fun）。Go (Gin) 纯算法实现 <b>LMSR 自动做市</b>与高速撮合，Serverless 部署于 AWS Lambda，交易终局链上异步存证；Flutter 双端 + 响应式 Web，CI/CD 全覆盖。</span>
-          <span class="en">Prediction market (seesaw.fun). Pure-algorithm <b>LMSR market making</b> and a fast matching engine in Go (Gin), serverless on AWS Lambda, with asynchronous on-chain proof-of-trade finality; Flutter on both mobile platforms plus responsive web, fully covered by CI/CD.</span>
-        </div></div>
-        <div class="row"><div class="lab">bitx</div><div class="txt">
-          <span class="zh">EVM + Solana 双链社交 / 预测超级 App（bitx.now）。Privy 无感登录、MoonPay 法币入金、<b>ERC-4337 Paymaster 无 Gas</b> 交易；自部署 Matrix（Dendrite / Tuwunel）去中心化通讯。</span>
-          <span class="en">A dual-chain (EVM + Solana) social/prediction super-app (bitx.now). Privy frictionless auth, MoonPay fiat on-ramp, <b>gasless transactions via ERC-4337 Paymaster</b>, and self-hosted Matrix (Dendrite / Tuwunel) for decentralised messaging.</span>
-        </div></div>
-        <div class="row res"><div class="lab">Sigma</div><div class="txt">
-          <span class="zh">BNB Chain 超额抵押稳定币 bnbUSD + 收益聚合（sigma.money），深度接入 Curve 生态，<b>协议 TVL 历史峰值 &gt; $650 万</b>。</span>
-          <span class="en">Over-collateralised stablecoin bnbUSD plus a yield aggregator on BNB Chain (sigma.money), deeply integrated with the Curve ecosystem. <b>Protocol peak TVL &gt; $6.5M</b>.</span>
-        </div></div>
-      </div>
-      <div class="mini"><span>LMSR</span><span>AWS Lambda</span><span>ERC-4337</span><span>Matrix self-host</span><span>Jito bundles</span></div>
-    </article>
-
-    <!-- oss -->
-    <article class="card rv">
-      <div class="card-tag">◆ OPEN SOURCE / TOOLS</div>
-      <h3><span class="zh">开源与工具</span><span class="en">Open source &amp; tooling</span></h3>
-      <div class="pmr">
-        <div class="row"><div class="lab">REPOS</div><div class="txt">
-          <span class="zh"><a style="color:var(--cy);text-decoration:none;border-bottom:1px solid var(--line-2)" href="https://github.com/yixin-1024/cnki-search" target="_blank" rel="noopener">cnki-search</a> 零依赖 CLI 检索中文学术文献 · <a style="color:var(--cy);text-decoration:none;border-bottom:1px solid var(--line-2)" href="https://github.com/yixin-1024/askgpt" target="_blank" rel="noopener">askgpt</a> 用 CDP 驱动本机 ChatGPT 桌面 app，让终端 agent 能「请教 GPT」 · qr-studio · html2gif</span>
-          <span class="en"><a style="color:var(--cy);text-decoration:none;border-bottom:1px solid var(--line-2)" href="https://github.com/yixin-1024/cnki-search" target="_blank" rel="noopener">cnki-search</a> — zero-dependency CLI for Chinese academic literature · <a style="color:var(--cy);text-decoration:none;border-bottom:1px solid var(--line-2)" href="https://github.com/yixin-1024/askgpt" target="_blank" rel="noopener">askgpt</a> — drives the local ChatGPT desktop app over CDP so a terminal agent can "ask GPT" · qr-studio · html2gif</span>
-        </div></div>
-        <div class="row"><div class="lab">UPSTREAM</div><div class="txt">
-          <span class="zh">为 <b>jackwener/opencli</b> 贡献 Strava (#2005) / Garmin (#2006) 数据源适配器。</span>
-          <span class="en">Contributed the Strava (#2005) and Garmin (#2006) data-source adapters to <b>jackwener/opencli</b>.</span>
-        </div></div>
-        <div class="row res"><div class="lab">EDGE</div><div class="txt">
-          <span class="zh">在<b>无 root 的 Android 手机上原生跑通 3 个 AI agent CLI</b>（Claude Code / Codex / Antigravity），攻克 exec 权限、PT_INTERP 原地改写、DNS、app-seccomp 四道关卡——手机本身就能当 Agent 的躯壳。另自建/接入十余个 MCP：地图、本机通知与验证码、真机截图、骑行路书导出等。</span>
-          <span class="en">Got <b>three AI agent CLIs running natively on an unrooted Android phone</b> (Claude Code / Codex / Antigravity), clearing four obstacles: exec permissions, in-place PT_INTERP rewriting, DNS, and app-seccomp — the phone itself can be the agent's shell. Also built or wired up a dozen MCP servers: maps, local notifications and OTP capture, on-device screenshots, cycling route export.</span>
-        </div></div>
-      </div>
-    </article>
-
-  </div>
-</section>
-
-<!-- ===================== TACHIKOMA ===================== -->
-<section id="tachikoma">
-  <div class="sec-head rv">
-    <span class="sec-idx">// 04</span>
-    <h2><span class="zh">正在做</span><span class="en">NOW BUILDING</span></h2>
-    <span class="sec-sub">@ EVOTAVERN SHENZHEN · 2026.09.21 → 09.24</span>
-  </div>
-  <div class="rule"></div>
-
-  <div class="tk rv">
-    <div class="tk-head">
-      <div class="tk-title">
-        <h3>TACHIKOMA</h3><span class="jp">タチコマ · 塔奇克马</span>
-      </div>
-      <div class="tk-meta">
-        <span class="zh">TRACK ▸ SECTION 9 ｜多 Agent 协作　·　SUB ▸ GHOST NETWORK ｜原生 Agent</span>
-        <span class="en">TRACK ▸ SECTION 9 | multi-agent　·　SUB ▸ GHOST NETWORK | native agent</span>
-      </div>
-    </div>
-    <div class="tk-body">
-      <div class="tk-copy">
-        <p class="claim">
-          <span class="zh">「共享记忆，不必共享同一个判断。」</span>
-          <span class="en">"Share the memory — not the verdict."</span>
-        </p>
-        <p>
-          <span class="zh">借用《攻壳机动队》里塔奇克马<b>共享经验</b>的意象：一群单元各自出勤，回来把学到的东西合并，再带着共享记忆重新出发。这次我想解决的具体问题是：<span class="hl">各个 Agent 的发现，哪些值得进入下一轮的共享记忆。</span></span>
-          <span class="en">Borrowing the image of the Tachikomas <b>sharing experience</b> from Ghost in the Shell: a group of units deploy separately, come back and merge what they learned, then set out again carrying the shared memory. The concrete problem I want to work on: <span class="hl">of everything the agents found, which findings deserve to enter the next round's shared memory.</span></span>
-        </p>
-
-        <div class="split">
-          <div class="col">
-            <h4 class="ok"><span class="zh">已有 · 可直接复用</span><span class="en">ALREADY BUILT · REUSABLE</span></h4>
-            <div class="flow">
-              <div><i>✓</i><span class="zh">多 Agent 并行调度与跨轮执行</span><span class="en">parallel multi-agent dispatch with cross-turn execution</span></div>
-              <div><i>✓</i><span class="zh">跨模型独立复核（会签）</span><span class="en">independent cross-model re-verification (co-signature)</span></div>
-              <div><i>✓</i><span class="zh">手机原生通话语音入口（双机跑通）</span><span class="en">native phone-call voice entry point (verified on two handsets)</span></div>
-            </div>
-          </div>
-          <div class="col">
-            <h4 class="wip"><span class="zh">赛期拟新增 · 现场要做的</span><span class="en">TO BE BUILT ON SITE</span></h4>
-            <div class="flow">
-              <div><i>+</i><span class="zh">候选经验的证据校验与冲突挂起</span><span class="en">evidence checks on candidate findings, with conflicts put on hold</span></div>
-              <div><i>+</i><span class="zh">带来源 / 版本 / 可撤回的共享记忆</span><span class="en">shared memory with provenance, versioning and revocability</span></div>
-              <div><i>+</i><span class="zh">分歧可视化</span><span class="en">visualising where the agents disagree</span></div>
-              <div><i>+</i><span class="zh">下一轮行为是否真的改变的对照验证</span><span class="en">a controlled check on whether the next round's behaviour actually changed</span></div>
-            </div>
-          </div>
-        </div>
-
-        <p style="margin-top:18px">
-          <span class="zh"><b>现场动线：</b>评委可以<span class="hl">拿起电话</span>口述任务（走已跑通的 CarVoice 链路），蜂群并行开工，大屏实时显示每只单元在看什么、在哪产生分歧、怎么合并；完工结果在<span class="hl">通话中插播</span>回来。</span>
-          <span class="en"><b>On-site flow:</b> a judge can <span class="hl">pick up a phone</span> and brief it by voice (over the CarVoice link that already works), the swarm starts working in parallel, and the big screen shows live what each unit is looking at, where they diverge and how it merges; finished results are <span class="hl">interjected back into the call</span>.</span>
-        </p>
-        <p class="caveat">
-          <span class="zh">// 名字只是致敬，差异化靠机制不靠梗。上面「已有」的部分现在就能演示；「赛期拟新增」的部分现在还不存在，我不会把它说成已经做好了。</span>
-          <span class="en">// The name is just an homage; the differentiation is in the mechanism, not the reference. Everything under "already built" can be demoed today. Everything under "to be built" does not exist yet, and I won't pretend otherwise.</span>
-        </p>
-      </div>
-
-      <div>
-        <div class="viz">
-          <canvas id="swarm" aria-label="multi-agent swarm visualisation" role="img"></canvas>
-          <div class="viz-bar"><span id="phase">BOOT</span><span id="tick">UNITS 7 / MERGE 0</span></div>
-        </div>
-        <div class="viz-cap">
-          <span class="zh">// 一条需求 fan-out ≤7 个独立子会话并行 → 周期性收束做记忆合并 → 带着共享记忆再分化。左半（并行调度 / 跨轮存活）已在用，合并那一步的证据校验是赛期要做的。　<b style="color:var(--vi)">示意动画，非实时系统输出。</b></span>
-          <span class="en">// one request fans out to ≤7 independent sub-sessions running in parallel → they periodically converge to merge memory → then re-differentiate carrying it. The fan-out and cross-turn survival already work; the evidence-checking inside the merge is what the hackathon is for.　<b style="color:var(--vi)">Illustrative animation, not a live system feed.</b></span>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ===================== STACK ===================== -->
-<section id="stack">
-  <div class="sec-head rv">
-    <span class="sec-idx">// 05</span>
-    <h2><span class="zh">技术栈</span><span class="en">STACK</span></h2>
-  </div>
-  <div class="rule"></div>
-  <div class="stack rv">
-    <div class="sgrp"><h4>AGENT ENGINEERING</h4><div class="items">
-      <span>Claude Code</span><span>Codex</span><span>Gemini Live</span><span>opencode</span><span>MiMo</span><span>Grok</span><span>Antigravity</span><span>MCP</span><span>Skills</span><span>Fleet orchestration</span><span>Computer / Browser Use</span><span>Token cost control</span>
-    </div></div>
-    <div class="sgrp"><h4>LANGUAGES</h4><div class="items">
-      <span>Golang</span><span>Python</span><span>Java</span><span>Node / TypeScript</span><span>C / C++</span><span>Solidity</span>
-    </div></div>
-    <div class="sgrp"><h4>FRAMEWORKS</h4><div class="items">
-      <span>GoFrame</span><span>Gin</span><span>rpcx</span><span>asyncio</span><span>Flutter</span><span>Android Telecom</span>
-    </div></div>
-    <div class="sgrp"><h4>DATA</h4><div class="items">
-      <span>MySQL</span><span>PostgreSQL</span><span>Redis</span><span>Elasticsearch</span><span>Neo4j</span><span>etcd</span><span>Consul</span><span>Kafka</span>
-    </div></div>
-    <div class="sgrp"><h4>INFRA</h4><div class="items">
-      <span>Linux</span><span>Docker</span><span>Kubernetes</span><span>Helm</span><span>AWS Lambda / S3 / DynamoDB / EC2</span><span>GCP</span><span>Cloudflare</span><span>Nginx</span><span>GitHub Actions</span>
-    </div></div>
-    <div class="sgrp"><h4>REALTIME AUDIO</h4><div class="items">
-      <span>Duplex AudioRecord / AudioTrack</span><span>Adaptive VAD</span><span>AEC / barge-in</span><span>8k·16k·24k·48k resampling</span><span>WebSocket streaming</span>
-    </div></div>
-    <div class="sgrp"><h4>WEB3</h4><div class="items">
-      <span>Solana</span><span>EVM</span><span>BTC Taproot / Ordinals / BRC20</span><span>Chainlink</span><span>ERC-4337</span><span>Jito</span>
-    </div></div>
-    <div class="sgrp"><h4>EMBEDDED</h4><div class="items">
-      <span>Wi-Fi 6 protocol stack</span><span>Firmware ROM-ification</span><span>Memory compression</span><span>System-level test automation</span>
-    </div></div>
-  </div>
-</section>
-
-<!-- ===================== TIMELINE ===================== -->
-<section id="timeline">
-  <div class="sec-head rv">
-    <span class="sec-idx">// 06</span>
-    <h2><span class="zh">履历</span><span class="en">TIMELINE</span></h2>
-    <span class="sec-sub"><span class="zh">倒序</span><span class="en">reverse chronological</span></span>
-  </div>
-  <div class="rule"></div>
-  <div class="tl rv">
-    <div class="it now">
-      <div class="when">2023.09 — NOW</div>
-      <div class="who"><span class="zh">Regtank（新加坡）/ SPXpay</span><span class="en">Regtank (Singapore) / SPXpay</span></div>
-      <div class="role"><span class="zh">技术负责人 · 高级全栈工程师（远程）</span><span class="en">Tech lead · senior full-stack engineer (remote)</span></div>
-      <div class="what">
-        <span class="zh">合规科技（AML / KYC / KYB 风险筛查）与加拿大 FINTRAC 持牌跨境支付。主导支付合规核心后端：Acuris 通道自动化筛查链路、持牌通道的企业 VISA 虚拟卡秒级发行与流水核对、银行通道 USD/HKD 多币种虚拟账户开立与清结算；并把开户、发卡、费率配置、合规复核全流程 Agent 化。</span>
-        <span class="en">Regtech (AML / KYC / KYB screening) and FINTRAC-licensed cross-border payments. Led the core payments-compliance backend: automated Acuris screening pipelines, second-scale corporate VISA virtual card issuing through a licensed channel with flow reconciliation, and USD/HKD multi-currency virtual accounts plus settlement through a bank channel — then turned onboarding, issuing, rate configuration and compliance review into agent pipelines.</span>
-      </div>
-    </div>
-    <div class="it">
-      <div class="when">2023.02 — 2023.08</div>
-      <div class="who"><span class="zh">华为武汉研究所（上海海思）</span><span class="en">Huawei Wuhan Institute (HiSilicon)</span></div>
-      <div class="role"><span class="zh">嵌入式研发工程师</span><span class="en">Embedded systems engineer</span></div>
-      <div class="what">
-        <span class="zh">Wi-Fi 6 芯片协议栈研发（信道带宽自适应、动态信道优选）；固件 ROM 化改造与内存压缩，保障 SoC 一次性量产；独立搭建系统级自动化测试框架，覆盖全特性与软硬件联合容错。</span>
-        <span class="en">Wi-Fi 6 chip protocol stack (adaptive channel bandwidth, dynamic channel selection); firmware ROM-ification and memory compression to secure first-pass SoC mass production; built a system-level test automation framework covering all features and hardware/software fault tolerance.</span>
-      </div>
-    </div>
-    <div class="it">
-      <div class="when">2021.07 — 2023.01</div>
-      <div class="who"><span class="zh">多益网络</span><span class="en">Duoyi Network</span></div>
-      <div class="role"><span class="zh">后端研发工程师</span><span class="en">Backend engineer</span></div>
-      <div class="what">
-        <span class="zh">云桥企业级协同 IM：微服务通讯核心链路设计、连接节点水平扩缩容，稳定承载千人级企业群组的高频音视频与图文；引入 Kafka 分区保障高吞吐与可靠送达。企业百科图谱系统：Golang + MySQL + Redis 高性能关系存储，引入 Neo4j 渲染词条网状知识图谱。</span>
-        <span class="en">Yunqiao enterprise IM: designed the core micro-service messaging path and horizontal scaling of connection nodes, sustaining high-frequency A/V and rich messaging for thousand-member corporate groups; introduced Kafka partitioning for throughput and guaranteed delivery. Enterprise knowledge-graph system: high-performance relational storage on Golang + MySQL + Redis, with Neo4j rendering the entity graph.</span>
-      </div>
-    </div>
-    <div class="it">
-      <div class="when">2017.09 — 2021.06</div>
-      <div class="who"><span class="zh">华中科技大学</span><span class="en">Huazhong University of Science and Technology</span></div>
-      <div class="role"><span class="zh">软件工程 · 本科（985 / 211）</span><span class="en">B.Eng. Software Engineering (985 / 211)</span></div>
-    </div>
-  </div>
-</section>
-
-<!-- ===================== CONTACT ===================== -->
-<section id="contact">
-  <div class="sec-head rv">
-    <span class="sec-idx">// 07</span>
-    <h2><span class="zh">联系</span><span class="en">CONTACT</span></h2>
-    <span class="sec-sub"><span class="zh">现居广东湛江 · 支持远程 / 可赴深圳现场</span><span class="en">Zhanjiang, Guangdong · remote-friendly · on-site in Shenzhen</span></span>
-  </div>
-  <div class="rule"></div>
-  <div class="contact rv">
-    <a class="ct" href="https://github.com/yixin-1024" target="_blank" rel="noopener">
-      <div class="k">GITHUB</div><div class="v">github.com/yixin-1024 ↗</div>
-    </a>
-    <a class="ct" href="mailto:yixin@regtank.com">
-      <div class="k">EMAIL</div><div class="v">yixin@regtank.com</div>
-    </a>
-    <a class="ct" href="https://github.com/yixin-1024/feishu-claude-code" target="_blank" rel="noopener">
-      <div class="k"><span class="zh">旗舰开源项目</span><span class="en">FLAGSHIP REPO</span></div><div class="v">cc-lark / feishu-claude-code ↗</div>
-    </a>
-  </div>
-</section>
-
-<footer>
-  <span>© 2026 LU YIXIN · LOUIE</span>
-  <span class="zh">单文件静态页 · 无构建 · 无追踪</span>
-  <span class="en">single static file · no build step · no tracking</span>
-  <span>STATUS: <span style="color:var(--cy)">ONLINE</span></span>
-</footer>
-</main>
-
-<script>
-(function(){
-  "use strict";
-  var root=document.documentElement;
-  var reduce=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-  /* ---------- lang ---------- */
-  var savedLang=null,savedTheme=null;
-  try{savedLang=localStorage.getItem("lang");savedTheme=localStorage.getItem("theme");}catch(e){}
-  if(savedLang!=="en"&&savedLang!=="zh") savedLang="zh";
-  setLang(savedLang);
-  if(savedTheme) setTheme(savedTheme);
-
-  function setLang(l){
-    root.setAttribute("data-lang",l);
-    root.setAttribute("lang",l==="zh"?"zh-CN":"en");
-    var b=document.getElementById("lang"); if(b) b.textContent=(l==="zh"?"EN":"中文");
-    paintNums();
-  }
-  function setTheme(t){
-    root.setAttribute("data-theme",t);
-    var b=document.getElementById("theme"); if(b) b.textContent=(t==="dark"?"◐":"◑");
-  }
-  document.getElementById("lang").addEventListener("click",function(){
-    var n=root.getAttribute("data-lang")==="zh"?"en":"zh";
-    setLang(n); try{localStorage.setItem("lang",n);}catch(e){}
-  });
-  document.getElementById("theme").addEventListener("click",function(){
-    var n=root.getAttribute("data-theme")==="dark"?"light":"dark";
-    setTheme(n); try{localStorage.setItem("theme",n);}catch(e){}
-  });
-
-  /* ---------- reveal ---------- */
-  var rvs=[].slice.call(document.querySelectorAll(".rv"));
-  if(!("IntersectionObserver" in window)||reduce){
-    rvs.forEach(function(e){e.classList.add("in");});
-  }else{
-    var io=new IntersectionObserver(function(es){
-      es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add("in"); io.unobserve(e.target); } });
-    },{rootMargin:"0px 0px -8% 0px",threshold:.05});
-    rvs.forEach(function(e){io.observe(e);});
-  }
-
-  /* ---------- number count-up ---------- */
-  var numEls=[].slice.call(document.querySelectorAll(".num .v"));
-  var numsDone=false;
-  function en(){ return root.getAttribute("data-lang")==="en"; }
-  function target(el){
-    var a=(en()&&el.hasAttribute("data-n-en"))?el.getAttribute("data-n-en"):el.getAttribute("data-n");
-    return parseFloat(a);
-  }
-  function fmt(el,val){
-    var dk=(en()&&el.hasAttribute("data-dec-en"))?"data-dec-en":"data-dec";
-    var dec=parseInt(el.getAttribute(dk)||"0",10);
-    var pre=el.getAttribute("data-pre")||"";
-    var suf=(en()&&el.hasAttribute("data-suf-en"))?el.getAttribute("data-suf-en"):(el.getAttribute("data-suf")||"");
-    var n=dec?val.toFixed(dec):Math.round(val).toString();
-    if(!dec&&Math.abs(val)>=1000) n=Math.round(val).toLocaleString("en-US");
-    el.innerHTML=pre+n+(suf?'<small>'+suf+'</small>':'');
-  }
-  function paintNums(){ if(!numEls) return; numEls.forEach(function(el){ fmt(el,target(el)); }); }
-  function runNums(){
-    if(numsDone) return; numsDone=true;
-    if(reduce){ paintNums(); return; }
-    numEls.forEach(function(el,i){
-      var tgt=target(el), t0=null, dur=900+i*45;
-      function step(ts){
-        if(t0===null) t0=ts;
-        var p=Math.min(1,(ts-t0)/dur), e=1-Math.pow(1-p,3);
-        fmt(el,tgt*e);
-        if(p<1) requestAnimationFrame(step);
-      }
-      requestAnimationFrame(step);
-    });
-  }
-  paintNums();
-  var numsWrap=document.querySelector(".nums");
-  if(numsWrap&&"IntersectionObserver" in window){
-    var io2=new IntersectionObserver(function(es){
-      es.forEach(function(e){ if(e.isIntersecting){ runNums(); io2.disconnect(); } });
-    },{threshold:.2});
-    io2.observe(numsWrap);
-  }else{ runNums(); }
-
-  /* ---------- hero typewriter ---------- */
-  (function(){
-    var cmdEl=document.getElementById("tw"), outEl=document.getElementById("twout");
-    if(!cmdEl) return;
-    var SEQ=[
-      {c:"cc-lark dispatch --fanout 7",
-       o:["<span style='color:var(--cy)'>[ok]</span> 7 sub-sessions dispatched · running in parallel · surviving the turn",
-          "<span style='color:var(--cy)'>[ok]</span> each reports back · main agent woken to aggregate"]},
-      {c:"cc-lark fleet status",
-       o:["<span style='color:var(--cy)'>[ok]</span> 6 agent backends · 8 bots · 30+ production skills",
-          "<span style='color:var(--cy)'>[ok]</span> 14,000,000,000 tokens / 30d  (API-equivalent accounting)"]},
-      {c:"dial 8888   # brief the swarm by voice",
-       o:["<span style='color:var(--cy)'>[ok]</span> first response 1.6s · barge-in 330ms · tool rtt 31ms",
-          "<span style='color:var(--cy)'>[ok]</span> results interjected mid-call; unread receipts replayed next call"]},
-      {c:"tachikoma memory merge --provenance",
-       o:["<span style='color:var(--vi)'>[wip]</span> evidence check · conflict hold · revocable shared memory",
-          "<span style='color:var(--vi)'>[wip]</span> to be built on site @ evotavern"]}
-    ];
-    if(reduce){
-      cmdEl.textContent=SEQ[0].c;
-      outEl.innerHTML=SEQ[0].o.join("<br>");
-      return;
-    }
-    var si=0,ci=0,mode="type";
-    function loop(){
-      var s=SEQ[si];
-      if(mode==="type"){
-        ci++; cmdEl.textContent=s.c.slice(0,ci);
-        if(ci>=s.c.length){ mode="out"; setTimeout(loop,320); return; }
-        setTimeout(loop,26+Math.random()*34); return;
-      }
-      if(mode==="out"){
-        outEl.innerHTML=s.o[0];
-        setTimeout(function(){ outEl.innerHTML=s.o.join("<br>"); mode="hold"; setTimeout(loop,2600); },520);
-        return;
-      }
-      if(mode==="hold"){ mode="erase"; setTimeout(loop,60); return; }
-      ci-=3; if(ci<0) ci=0;
-      cmdEl.textContent=s.c.slice(0,ci);
-      if(ci===0){ outEl.innerHTML=""; si=(si+1)%SEQ.length; mode="type"; setTimeout(loop,360); return; }
-      setTimeout(loop,14);
-    }
-    setTimeout(loop,700);
-  })();
-
-  /* ---------- swarm canvas ---------- */
-  (function(){
-    var cv=document.getElementById("swarm"); if(!cv) return;
-    var ctx=cv.getContext("2d",{alpha:false});
-    var NAMES=["UNIT-01","UNIT-02","UNIT-03","UNIT-04","UNIT-05","UNIT-06","UNIT-07"];
-    var N=NAMES.length, units=[], W=0,H=0,DPR=1;
-    var phaseEl=document.getElementById("phase"), tickEl=document.getElementById("tick");
-    var mergeCount=0, t=0, running=false, visible=true;
-
-    function css(v){ return getComputedStyle(root).getPropertyValue(v).trim(); }
-    function resize(){
-      DPR=Math.min(2,window.devicePixelRatio||1);
-      var r=cv.getBoundingClientRect();
-      W=Math.max(200,r.width); H=Math.max(160,r.height);
-      cv.width=Math.round(W*DPR); cv.height=Math.round(H*DPR);
-      ctx.setTransform(DPR,0,0,DPR,0,0);
-    }
-    for(var i=0;i<N;i++){
-      units.push({a:(i/N)*Math.PI*2, sp:.0032+Math.random()*.0028, r:1, jit:Math.random()*Math.PI*2, hue:i});
-    }
-    // cycle: 0-5200ms parallel, 5200-7000 converge, 7000-7900 merge flash, 7900-9200 re-differentiate
-    var CYCLE=9200;
-    function phaseOf(ms){
-      if(ms<5200) return {name:"PARALLEL RUN",k:0,p:ms/5200};
-      if(ms<7000) return {name:"CONVERGE",k:1,p:(ms-5200)/1800};
-      if(ms<7900) return {name:"MEMORY MERGE",k:2,p:(ms-7000)/900};
-      return {name:"RE-DIFFERENTIATE",k:3,p:(ms-7900)/1300};
-    }
-    function ease(p){ return p<.5?2*p*p:1-Math.pow(-2*p+2,2)/2; }
-
-    var last=0, lastK=-1;
-    function frame(ts){
-      if(!running) return;
-      if(!last) last=ts;
-      var dt=Math.min(50,ts-last); last=ts; t+=dt;
-      draw(t,dt);
-      requestAnimationFrame(frame);
-    }
-
-    function draw(t,dt){
-      var ms=t%CYCLE, ph=phaseOf(ms);
-      if(ph.k!==lastK){
-        lastK=ph.k;
-        if(phaseEl) phaseEl.textContent=ph.name;
-        if(ph.k===2){ mergeCount++; if(tickEl) tickEl.textContent="UNITS "+N+" / MERGE "+mergeCount; }
-      }
-      var bg=root.getAttribute("data-theme")==="light"?"#f7fafa":"#04070a";
-      var CY=css("--cy")||"#00fff0", VI=css("--vi")||"#b47cff", FAINT=css("--fg-faint")||"#4c5c66";
-
-      ctx.fillStyle=bg; ctx.fillRect(0,0,W,H);
-
-      var cx=W/2, cy=H/2, base=Math.min(W,H)*0.33;
-
-      // hub rings
-      ctx.strokeStyle=hexA(CY,.10); ctx.lineWidth=1;
-      for(var r=base*0.45;r<base*1.45;r+=base*0.33){
-        ctx.beginPath(); ctx.arc(cx,cy,r,0,Math.PI*2); ctx.stroke();
-      }
-
-      // radius envelope per phase
-      var rad;
-      if(ph.k===0) rad=1;
-      else if(ph.k===1) rad=1-ease(ph.p)*0.92;
-      else if(ph.k===2) rad=0.08;
-      else rad=0.08+ease(ph.p)*0.92;
-
-      // positions
-      var pts=[];
-      for(var i=0;i<N;i++){
-        var u=units[i];
-        u.a+=u.sp*(dt/16.6)*(ph.k===0?1:0.35);
-        u.jit+=0.04*(dt/16.6);
-        var wob=(ph.k===0?1:0.2)*Math.sin(u.jit)*base*0.10;
-        var rr=base*rad+wob*rad;
-        pts.push({x:cx+Math.cos(u.a)*rr, y:cy+Math.sin(u.a)*rr*0.82, a:u.a});
-      }
-
-      // spokes to hub
-      ctx.lineWidth=1;
-      for(var i=0;i<N;i++){
-        var g=ctx.createLinearGradient(cx,cy,pts[i].x,pts[i].y);
-        g.addColorStop(0,hexA(CY,.30)); g.addColorStop(1,hexA(CY,.04));
-        ctx.strokeStyle=g;
-        ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(pts[i].x,pts[i].y); ctx.stroke();
-      }
-
-      // mesh during converge / merge
-      if(ph.k===1||ph.k===2){
-        var alpha=ph.k===2?.55:.12+ease(ph.p)*.35;
-        ctx.strokeStyle=hexA(VI,alpha); ctx.lineWidth=1;
-        for(var i=0;i<N;i++) for(var j=i+1;j<N;j++){
-          ctx.beginPath(); ctx.moveTo(pts[i].x,pts[i].y); ctx.lineTo(pts[j].x,pts[j].y); ctx.stroke();
-        }
-      }
-
-      // merge flash
-      if(ph.k===2){
-        var f=1-Math.abs(ph.p-.35)/.65; if(f<0) f=0;
-        var rg=ctx.createRadialGradient(cx,cy,0,cx,cy,base*0.9);
-        rg.addColorStop(0,hexA(CY,.30*f)); rg.addColorStop(1,hexA(CY,0));
-        ctx.fillStyle=rg; ctx.beginPath(); ctx.arc(cx,cy,base*0.9,0,Math.PI*2); ctx.fill();
-      }
-
-      // hub core
-      ctx.fillStyle=hexA(CY,.9);
-      ctx.beginPath(); ctx.arc(cx,cy,3.2,0,Math.PI*2); ctx.fill();
-      ctx.strokeStyle=hexA(CY,.35); ctx.lineWidth=1;
-      ctx.beginPath(); ctx.arc(cx,cy,8+Math.sin(t/420)*2.2,0,Math.PI*2); ctx.stroke();
-
-      // units
-      ctx.font="9px "+ "'JetBrains Mono',monospace";
-      for(var i=0;i<N;i++){
-        var p=pts[i], col=(ph.k===3&&ph.p<.6)?VI:CY;
-        ctx.fillStyle=hexA(col,.95);
-        ctx.beginPath(); ctx.arc(p.x,p.y,3.4,0,Math.PI*2); ctx.fill();
-        ctx.strokeStyle=hexA(col,.30); ctx.lineWidth=1;
-        ctx.beginPath(); ctx.arc(p.x,p.y,7.5,0,Math.PI*2); ctx.stroke();
-        if(W>360&&rad>0.35){
-          var lx=p.x+(Math.cos(p.a)>=0?10:-10), align=Math.cos(p.a)>=0?"left":"right";
-          ctx.textAlign=align; ctx.textBaseline="middle";
-          ctx.fillStyle=hexA(FAINT,.85*Math.min(1,rad));
-          ctx.fillText(NAMES[i],lx,p.y);
-        }
-      }
-
-      // corner hud
-      ctx.textAlign="left"; ctx.textBaseline="top";
-      ctx.fillStyle=hexA(FAINT,.7);
-      ctx.fillText("FAN-OUT \u2264 7 \u00b7 PARALLEL SUB-SESSIONS",10,9);
-      ctx.textAlign="right";
-      ctx.fillStyle=hexA(CY,.75);
-      ctx.fillText("t="+(t/1000).toFixed(1)+"s",W-10,9);
-    }
-
-    function hexA(hex,a){
-      hex=(hex||"").trim();
-      if(hex.charAt(0)!=="#") return "rgba(0,255,240,"+a+")";
-      if(hex.length===4) hex="#"+hex[1]+hex[1]+hex[2]+hex[2]+hex[3]+hex[3];
-      var n=parseInt(hex.slice(1),16);
-      return "rgba("+((n>>16)&255)+","+((n>>8)&255)+","+(n&255)+","+a+")";
-    }
-
-    function start(){ if(running||!visible) return; running=true; last=0; requestAnimationFrame(frame); }
-    function stop(){ running=false; }
-
-    resize();
-    if(reduce){
-      t=3000; draw(t,16);
-      if(phaseEl) phaseEl.textContent="PARALLEL RUN";
-    }else{
-      if("IntersectionObserver" in window){
-        new IntersectionObserver(function(es){
-          es.forEach(function(e){ visible=e.isIntersecting; if(visible) start(); else stop(); });
-        },{threshold:.05}).observe(cv);
-      }else{ visible=true; start(); }
-      document.addEventListener("visibilitychange",function(){
-        if(document.hidden) stop(); else start();
-      });
-    }
-    var rt;
-    window.addEventListener("resize",function(){
-      clearTimeout(rt);
-      rt=setTimeout(function(){ resize(); if(reduce) draw(t,16); },160);
-    });
-    document.getElementById("theme").addEventListener("click",function(){
-      setTimeout(function(){ if(reduce) draw(t,16); },20);
-    });
-  })();
-})();
-</script>
+</div>
 </body>
 </html>
