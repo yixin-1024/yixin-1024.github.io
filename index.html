@@ -569,15 +569,15 @@ footer{border-top:1px solid var(--line);padding:26px 0 40px;font-family:var(--mo
     <!-- wowapi -->
     <article class="card rv">
       <div class="card-tag">◆ INFRA / LLM GATEWAY<span class="chip">wowapi.ai</span></div>
-      <h3><span class="zh">wowapi.ai — 大模型网关与上游「验真」方法论</span><span class="en">wowapi.ai — LLM gateway &amp; upstream authenticity forensics</span></h3>
+      <h3><span class="zh">wowapi.ai — 多模型网关与供应商质量评测</span><span class="en">wowapi.ai — multi-model gateway &amp; supplier quality evaluation</span></h3>
       <div class="pmr">
         <div class="row"><div class="lab">PAIN</div><div class="txt">
           <span class="zh">走中转与聚合链路时，上游到底是哪个模型、怎么路由的，买家基本无从验证——只能听供应商自述。</span>
           <span class="en">When you buy through a relay or aggregator, you have almost no way to verify which model is actually serving you or how the request is routed — you're taking the supplier's word for it.</span>
         </div></div>
         <div class="row"><div class="lab">BUILD</div><div class="txt">
-          <span class="zh">自建高并发多模型聚合网关，并沉淀出一套<b>验真探针</b>：用长上下文记忆边界、逻辑陷阱、拒答指纹与生成风格识别套壳；用响应头特征、TLS 握手与延迟分布溯源请求是<b>直连官方 / 二次反代 / Bedrock·Vertex 托管</b>；深度处理 SSE 流式帧切片、token 计量核对与长上下文衰减实测。</span>
-          <span class="en">Built a high-concurrency multi-model aggregation gateway, and distilled a set of <b>authenticity probes</b>: long-context memory boundaries, logic traps, refusal fingerprints and generation-style tells expose re-skinned models; response headers, TLS handshakes and latency distributions trace whether a request goes <b>direct to the vendor, through a second-hop reverse proxy, or via Bedrock/Vertex</b>. Plus SSE frame-slicing, token accounting reconciliation and measured long-context decay.</span>
+          <span class="zh">自建高并发多模型聚合网关，并围绕协议兼容性、SSE 流式行为、长上下文表现、响应特征与 token 计量设计了一套<b>可重复的评测</b>；结合日志与工具输出，发现供应商的<b>行为差异与路由异常线索</b>。<sub>这些信号是线索，单独不能证明模型身份或完整上游路由。</sub></span>
+          <span class="en">Built a high-concurrency multi-model aggregation gateway, plus <b>repeatable evaluations</b> for protocol compatibility, SSE streaming behaviour, long-context performance, response characteristics and token accounting; logs and tool outputs surface <b>provider inconsistencies and routing anomalies</b>. <sub>These are diagnostic clues — alone they cannot establish model identity or the complete upstream route.</sub></span>
         </div></div>
         <div class="row res"><div class="lab">RESULT</div><div class="txt">
           <span class="zh">在生产流量上持续运行，能拿到供应商真伪与路由链路的<b>异常线索与一致性评测结果</b>，而不是只听对方自述。</span>
